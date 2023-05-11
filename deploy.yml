@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: true
+  vars:
+    docker_image_name: lstar974/serveur
+    docker_image_tag: latest
+    docker_container_name: site
+  tasks:
+    - name: Démarrer le service Docker
+      systemd:
+        name: docker
+        state: started
+
+    - name: Pull Docker image
+      docker_image:
+        name: "{{ docker_image_name }}:{{ docker_image_tag }}"
+        source: pull
+
+    - name: Stopper le conteneur
+      docker_container:
+        name: "{{ docker_container_name }}"
+        state: stopped
+        force_kill: yes
+      register: stopped_container
+      ignore_errors: yes
+
+    - name: Supprimer le conteneur
+      docker_container:
+        name: "{{ docker_container_name }}"
+        state: absent
+      when: stopped_container is defined and stopped_container is succeeded
+
+    - name: Démarrer le nouveau conteneur
+      docker_container:
+        name: "{{ docker_container_name }}"
+        image: "{{ docker_image_name }}:{{ docker_image_tag }}"
+        ports:
+          - "80:80"
+        state: started
