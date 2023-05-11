@@ -3,7 +3,12 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t servweb .'
+                dockerImage = docker.build("lstar974/hebergement")
+            }
+        }
+        stage('Create environment') {
+            steps {
+                ansiblePlaybook credentialsId: 'ssh', inventory: 'hosts.yml', playbook: 'playbook.yml'
             }
         }
         stage('Deploy') {
