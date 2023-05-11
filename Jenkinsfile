@@ -3,9 +3,20 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                dockerImage = docker.build("lstar974/hebergement")
+                script {
+                    dockerImage = docker.build("lstar974/serveur")
+                }
             }
         }
+        stage('Push image') {
+      steps {
+        script {
+          withDockerRegistry(credentialsId: 'docker') {
+            dockerImage.push()
+          }
+        }
+      }
+    }
         stage('Create environment') {
             steps {
                 ansiblePlaybook credentialsId: 'ssh', inventory: 'hosts.yml', playbook: 'playbook.yml'
@@ -13,7 +24,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'docker run -d -p 80:80 -p 443:443 servweb'
+                ansiblePlaybook credentialsId: 'ssh', inventory: 'hosts.yml', playbook: 'deploy.yml'
             }
         }
     }
