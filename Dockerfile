@@ -1,7 +1,7 @@
 FROM debian:11
 
 # Installation des dépendances
-RUN apt-get update && apt-get install mariadb-server \
+RUN apt-get update && apt-get install -y \
     apache2 \
     mariadb-server \
     php \
