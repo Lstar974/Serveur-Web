@@ -8,11 +8,6 @@ RUN apt-get update && apt-get install -y \
     php-mysql \
     git
 
-# Configuration de Apache
-COPY apache2-config /etc/apache2/
-RUN ln -s /etc/apache2/apache2-config/apache2/sites-available/ /etc/apache2-config/apache2/sites-enabled/
-RUN rm /etcapache2/apache2-config/apache2/sites-enabled/000-default.conf
-
 # Configuration de MariaDB
 COPY mariadb-config /etc/mysql/
 RUN service mysql start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" && mysql -e "CREATE USER 'matomo'@'localhost' IDENTIFIED BY 'password';" && mysql -e "GRANT ALL PRIVILEGES ON matomo.* TO 'matomo'@'localhost';"
