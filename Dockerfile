@@ -15,7 +15,7 @@ RUN ln -s /etc/apache2/sites-available/apache-config /etc/apache2/sites-enabled/
 RUN rm /etc/apache2/sites-enabled/000-default.conf
 
 # Configuration de MariaDB
-COPY mariadb.cnf /etc/mysql/mariadb.conf.d/
+COPY mariadb.cnf /etc/mysql/
 RUN service mysql start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" && mysql -e "CREATE USER 'matomo'@'localhost' IDENTIFIED BY 'password';" && mysql -e "GRANT ALL PRIVILEGES ON matomo.* TO 'matomo'@'localhost';"
 
 # Clonage du repo Github
