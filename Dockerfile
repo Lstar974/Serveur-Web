@@ -10,12 +10,12 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Configuration de Apache
-COPY apache-config /etc/apache2/sites-available/
+COPY apache2-config /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/apache-config /etc/apache2/sites-enabled/
 RUN rm /etc/apache2/sites-enabled/000-default.conf
 
 # Configuration de MariaDB
-COPY mariadb.cnf /etc/mysql/
+COPY mariadb-config /etc/mysql/
 RUN service mysql start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" && mysql -e "CREATE USER 'matomo'@'localhost' IDENTIFIED BY 'password';" && mysql -e "GRANT ALL PRIVILEGES ON matomo.* TO 'matomo'@'localhost';"
 
 # Clonage du repo Github
