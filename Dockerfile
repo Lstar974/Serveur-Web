@@ -9,9 +9,9 @@ RUN apt-get update && apt-get install mariadb-server \
     git
 
 # Configuration de Apache
-COPY apache2-config /etc/apache2/sites-available/
-RUN ln -s /etc/apache2/sites-available/apache-config /etc/apache2/sites-enabled/
-RUN rm /etc/apache2/sites-enabled/000-default.conf
+COPY apache2-config /etc
+RUN ln -s /etc/apache2-config/apache2/sites-available/ /etc/apache2-config/apache2/sites-enabled/
+RUN rm /etc/apache2-config/apache2/sites-enabled/000-default.conf
 
 # Configuration de MariaDB
 COPY mariadb-config /etc/mysql/
