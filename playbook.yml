@@ -71,22 +71,11 @@
     MYSQL_PWD: root
 
 - name: Création de la base de données pour Matomo
-  command: mysql -uroot -e "CREATE DATABASE
-       IF NOT EXISTS matomo;"
-     environment:
-       MYSQL_PWD: root
+  command: mysql -uroot -e "CREATE DATABASE IF NOT EXISTS matomo;"
+  environment:
+    MYSQL_PWD: root
 
-   - name: Création de l'utilisateur pour Matomo
-     command: mysql -uroot -e "CREATE USER 'matomo'@'localhost' IDENTIFIED BY 'password';"
-     environment:
-       MYSQL_PWD: root
-
-   - name: Attribution des permissions pour l'utilisateur Matomo
-     command: mysql -uroot -e "GRANT ALL PRIVILEGES ON matomo.* TO 'matomo'@'localhost';"
-     environment:
-       MYSQL_PWD: root
-
-   - name: Redémarrage du serveur MariaDB
-     service:
-       name: mariadb
-       state: restarted
+- name: Redémarrage du serveur MariaDB
+  service:
+    name: mariadb
+    state: restarted
