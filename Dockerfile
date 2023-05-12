@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Configuration de Apache
-COPY apache2-config /etc
+COPY apache2-config /etc/
 RUN ln -s /etc/apache2-config/apache2/sites-available/ /etc/apache2-config/apache2/sites-enabled/
 RUN rm /etc/apache2-config/apache2/sites-enabled/000-default.conf
 
