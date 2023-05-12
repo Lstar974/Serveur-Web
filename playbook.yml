@@ -1,6 +1,9 @@
 - name: Install Apache, MySQL and PHP
   hosts: all
   become: true
+  vars:  
+    ssl_cert_path: "/etc/ssl/certs/self-signed.crt"
+    ssl_key_path: "/etc/ssl/private/self-signed.key"
   tasks:
     - name: Installation des packages
       apt:
@@ -21,8 +24,8 @@
 
     - name: Create self-signed SSL certificate
       openssl_certificate:
-        path_cert: /etc/ssl/certs/self-signed.crt
-        path_key: /etc/ssl/private/self-signed.key
+        path_cert: "{{ ssl_cert_path }}"
+        path_key: "{{ ssl_key_path }}"
         common_name: "montp2.obtusk.com"
         subject_alt_name: "DNS:montp2.obtusk.com,DNS:matomo-montp2.obtusk.com"
         provider: selfsigned
