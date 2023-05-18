@@ -1,4 +1,3 @@
----
 - name: Déploiement du conteneur
   hosts: all
   become: true
@@ -17,14 +16,14 @@
         privileged: yes
       register: temp_container_output
 
-   - name: Extraction des fichiers de configuration du conteneur temporaire
-  command: docker cp {{ temp_container_output.container.ID }}:/etc/mysql/my.cnf {{ item.dest }}
-  loop:
-    - { src: "/etc/mysql/my.cnf", dest: "/etc/mysql/my.cnf" }
-    - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
-    - { src: "/etc/ssl/certs/apache-selfsigned.crt", dest: "/etc/ssl/certs/apache-selfsigned.crt" }
-    - { src: "/etc/apache2/sites-available/montp2.obtusk.com.conf", dest: "/etc/apache2/sites-available/montp2.obtusk.com.conf" }
-  when: temp_container_output is succeeded
+    - name: Extraction des fichiers de configuration du conteneur temporaire
+      command: docker cp {{ temp_container_output.container.ID }}:/etc/mysql/my.cnf {{ item.dest }}
+      loop:
+        - { src: "/etc/mysql/my.cnf", dest: "/etc/mysql/my.cnf" }
+        - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
+        - { src: "/etc/ssl/certs/apache-selfsigned.crt", dest: "/etc/ssl/certs/apache-selfsigned.crt" }
+        - { src: "/etc/apache2/sites-available/montp2.obtusk.com.conf", dest: "/etc/apache2/sites-available/montp2.obtusk.com.conf" }
+      when: temp_container_output is succeeded
 
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
