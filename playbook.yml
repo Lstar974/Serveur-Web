@@ -9,23 +9,27 @@
         name: docker.io
         state: present
 
-    - name: Extraction des configurations de l'image Docker
-      docker_image:
-        name:  lstar974/serveur
-        source: extract
-        src_path: "/etc/mysql/mariadb-config,/etc/ssl/private/apache-selfsigned.key,/etc/ssl/certs/apache-selfsigned.crt,/etc/apache2/sites-available/montp2.obtusk.com.conf"
-      register: docker_extract_output
+    - name: Démarrage d'un conteneur temporaire pour extraire les fichiers de configuration
+      docker_container:
+        name: my_app_container
+        image: lstar974/server
+        command: sleep infinity
+        detach: true
+      register: container_output
 
-    - name: Copie des fichiers de configuration
-      copy:
+    - name: Extraction des fichiers de configuration du conteneur temporaire
+      docker_cp:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
-        owner: root
-        group: root
-        mode: "0644"
+        container: temp_container.id
       loop:
         - { src: "/etc/mysql/mariadb-config", dest: "/etc/mysql/mariadb-config" }
         - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
         - { src: "/etc/ssl/certs/apache-selfsigned.crt", dest: "/etc/ssl/certs/apache-selfsigned.crt" }
         - { src: "/etc/apache2/sites-available/montp2.obtusk.com.conf", dest: "/etc/apache2/sites-available/montp2.obtusk.com.conf" }
-      when: docker_extract_output is succeeded
+      when: container_output is succeeded
+
+    - name: Arrêt et suppression du conteneur temporaire
+      docker_container:
+        name: my_app_container
+        state: absent
