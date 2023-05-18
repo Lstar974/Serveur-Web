@@ -18,7 +18,7 @@
       register: container_output
 
     - name: Extraction des fichiers de configuration du conteneur temporaire
-      docker_cp:
+      docker_copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
         container: temp_container.id
