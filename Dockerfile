@@ -19,10 +19,7 @@ RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 # Génération du certificat auto-signé
 RUN openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/C=US/ST=State/L=City/O=Organization/CN=montp2.obtusk.com" -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
 
-# Copie du fichier de configuration du virtualhost
-COPY 000-default.conf /etc/apache2/sites-available/montp2.obtusk.com.conf
-
-# Remplacement du contenu du fichier montp2.obtusk.com.conf par de nouvelles configurations
+# Création du fichier de configuration du virtualhost
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    Redirect permanent / https://montp2.obtusk.com/' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
