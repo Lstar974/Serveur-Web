@@ -24,11 +24,13 @@
         privileged: yes
       register: temp_container_output
 
-    - name: Copie des fichiers de configuration
-      docker_cp:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        container: "{{ temp_container_output.container }}"
+    - name: Copie des fichiers de configuration depuis le conteneur
+      docker_container:
+        name: my_temp_container
+        copy:
+          src: "{{ item.src }}"
+          dest: "{{ item.dest }}"
+          direction: from_container
       loop:
         - { src: "/etc/mysql/my.cnf", dest: "/etc/mysql/my.cnf" }
         - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
