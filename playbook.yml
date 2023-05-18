@@ -17,8 +17,8 @@
         privileged: yes
       register: temp_container_output
 
-    - name: Extraction des fichiers de configuration du conteneur temporaire
-      command: docker cp my_app_container:{{ item.src }} {{ item.dest }}
+   - name: Extraction des fichiers de configuration du conteneur temporaire
+      command: docker cp {{ temp_container_output.container.ID }}:{{ item.src }} {{ item.dest }}
       loop:
         - { src: "/etc/mysql/mariadb-config", dest: "/etc/mysql/mariadb-config" }
         - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
