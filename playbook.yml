@@ -3,11 +3,7 @@
   become: true
 
   tasks:
-    - name: Installation de Docker
-      apt:
-        name: docker.io
-        state: present
-
+    
     - name: Sauvegarde de l'image Docker en tant que fichier tar
       command: docker save lstar974/serveur -o /root/serveur.tar
 
