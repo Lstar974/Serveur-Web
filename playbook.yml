@@ -1,17 +1,31 @@
-- name: Deploy Application
-  hosts: 192.168.6.50
-  remote_user: lucas
+---
+- name: Déploiement du conteneur
+  hosts: all
   become: true
 
   tasks:
-    - name: Pull Docker Image
-      docker_image:
-        name: lstar974/serveur
-        source: pull
+    - name: Installation de Docker
+      apt:
+        name: docker.io
+        state: present
 
-    - name: Run Docker Container
-      docker_container:
-        name: my_app_container
-        image: lstar974/serveur
-        ports:
-          - "60:60"
+    - name: Extraction des configurations de l'image Docker
+      docker_image:
+        name:  lstar974/serveur
+        source: extract
+        src_path: "/etc/mysql/mariadb-config,/etc/ssl/private/apache-selfsigned.key,/etc/ssl/certs/apache-selfsigned.crt,/etc/apache2/sites-available/montp2.obtusk.com.conf"
+      register: docker_extract_output
+
+    - name: Copie des fichiers de configuration
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: "0644"
+      loop:
+        - { src: "/etc/mysql/mariadb-config", dest: "/etc/mysql/mariadb-config" }
+        - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
+        - { src: "/etc/ssl/certs/apache-selfsigned.crt", dest: "/etc/ssl/certs/apache-selfsigned.crt" }
+        - { src: "/etc/apache2/sites-available/montp2.obtusk.com.conf", dest: "/etc/apache2/sites-available/montp2.obtusk.com.conf" }
+      when: docker_extract_output is succeeded
