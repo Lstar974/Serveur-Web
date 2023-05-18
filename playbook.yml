@@ -8,37 +8,35 @@
         name: docker.io
         state: present
 
-    - name: Démarrage du conteneur temporaire
+    - name: Téléchargement de l'image Docker
+      docker_image:
+        name: lstar974/serveur
+
+    - name: Sauvegarde de l'image Docker en tant que fichier tar
+      command: docker save lstar974/serveur -o /root/serveur.tar
+
+    - name: Création du conteneur temporaire
       docker_container:
-        name: my_app_container
+        name: my_temp_container
         image: lstar974/serveur
+        command: sleep infinity
         detach: yes
         privileged: yes
       register: temp_container_output
 
-    - name: Vérification des emplacements des fichiers dans le conteneur temporaire
-      shell: docker exec -it my_app_container ls {{ item }}
-      loop:
-        - /etc/mysql/my.cnf
-        - /etc/ssl/private/apache-selfsigned.key
-        - /etc/ssl/certs/apache-selfsigned.crt
-        - /etc/apache2/sites-available/montp2.obtusk.com.conf
-        - /var/www/montp2.obtusk.com
-      register: file_check_output
-
-    - name: Extraction des fichiers de configuration du conteneur temporaire
-      shell: docker exec -i 3d329b925b3e1538e135ea3472f5cee5e19fdec3a1d607d338718a332293714f cat {{ item.src }} > {{ item.dest }}
+    - name: Copie des fichiers de configuration
+      docker_cp:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        container: "{{ temp_container_output.container }}"
       loop:
         - { src: "/etc/mysql/my.cnf", dest: "/etc/mysql/my.cnf" }
         - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
         - { src: "/etc/ssl/certs/apache-selfsigned.crt", dest: "/etc/ssl/certs/apache-selfsigned.crt" }
         - { src: "/etc/apache2/sites-available/montp2.obtusk.com.conf", dest: "/etc/apache2/sites-available/montp2.obtusk.com.conf" }
         - { src: "/var/www/montp2.obtusk.com", dest: "/var/www/montp2.obtusk.com" }
-      when: 
-        - file_check_output is succeeded
-        - (file_check_output.changed or (item.dest | stat).stat.exists == false)
 
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
-        name: my_app_container
+        name: my_temp_container
         state: absent
