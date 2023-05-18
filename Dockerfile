@@ -33,7 +33,13 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.c
     && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf
 
 # Activer les modules Apache
-RUN a2enmod ssl && a2ensite default-ssl
+RUN a2enmod ssl
+
+# Désactiver les fichiers de configuration par défaut
+RUN a2dissite 000-default.conf default-ssl.conf
+
+# Activer le fichier montp2.obtusk.com.conf
+RUN a2ensite montp2.obtusk.com.conf
 
 # Exposition des ports
 EXPOSE 80
