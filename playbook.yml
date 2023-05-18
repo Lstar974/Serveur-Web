@@ -24,6 +24,7 @@
         - /etc/ssl/certs/apache-selfsigned.crt
         - /etc/apache2/sites-available/montp2.obtusk.com.conf
         - /var/www/montp2.obtusk.com
+      register: file_check_output
 
     - name: Extraction des fichiers de configuration du conteneur temporaire
       command: docker cp -L {{ temp_container_output.container.Id }}:{{ item.src }} {{ item.dest }}
@@ -34,12 +35,10 @@
         - { src: "/etc/apache2/sites-available/montp2.obtusk.com.conf", dest: "/etc/apache2/sites-available/montp2.obtusk.com.conf" }
         - { src: "/var/www/montp2.obtusk.com", dest: "/var/www/montp2.obtusk.com" }
       when: 
-        - extraction_result is succeeded
-        - (extraction_result.changed or (item.dest | stat).stat.exists == false)
+        - file_check_output is succeeded
+        - (file_check_output.changed or (item.dest | stat).stat.exists == false)
 
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_app_container
         state: absent
-
-
