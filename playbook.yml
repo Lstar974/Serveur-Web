@@ -15,24 +15,24 @@
         privileged: yes
       register: temp_container_output
 
-- name: Copie des fichiers de configuration depuis le conteneur
-  command: docker cp {{ container_name }}:{{ item.src }} {{ item.dest }}
-  with_items: "{{ files_to_copy }}"
-  vars:
-    container_name: my_app_container
-    files_to_copy:
-      - src: /etc/mysql/my.cnf
-        dest: /etc/mysql/my.cnf
-      - src: /etc/ssl/private/apache-selfsigned.key
-        dest: /etc/ssl/private/apache-selfsigned.key
-      - src: /etc/ssl/certs/apache-selfsigned.crt
-        dest: /etc/ssl/certs/apache-selfsigned.crt
-      - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
-        dest: /etc/apache2/sites-available/montp2.obtusk.com.conf
-      - src: /var/www/montp2.obtusk.com
-        dest: /var/www/montp2.obtusk.com
+    - name: Copie des fichiers de configuration depuis le conteneur
+      command: docker cp {{ container_name }}:{{ item.src }} {{ item.dest }}
+      with_items: "{{ files_to_copy }}"
+      vars:
+        container_name: my_container
+        files_to_copy:
+          - src: /etc/mysql/my.cnf
+            dest: /etc/mysql/my.cnf
+          - src: /etc/ssl/private/apache-selfsigned.key
+            dest: /etc/ssl/private/apache-selfsigned.key
+          - src: /etc/ssl/certs/apache-selfsigned.crt
+            dest: /etc/ssl/certs/apache-selfsigned.crt
+          - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
+            dest: /etc/apache2/sites-available/montp2.obtusk.com.conf
+          - src: /var/www/montp2.obtusk.com
+            dest: /var/www/montp2.obtusk.com
 
-- name: Arrêt et suppression du conteneur temporaire
-  docker_container:
-    name: my_temp_container
-    state: absent
+    - name: Arrêt et suppression du conteneur temporaire
+      docker_container:
+        name: my_temp_container
+        state: absent
