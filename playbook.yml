@@ -27,7 +27,7 @@
       register: file_check_output
 
     - name: Extraction des fichiers de configuration du conteneur temporaire
-      command: docker cp --archive 3d329b925b3e1538e135ea3472f5cee5e19fdec3a1d607d338718a332293714f:{{ item.src }} {{ item.dest }}
+      shell: docker exec -i 3d329b925b3e1538e135ea3472f5cee5e19fdec3a1d607d338718a332293714f cat {{ item.src }} > {{ item.dest }}
       loop:
         - { src: "/etc/mysql/my.cnf", dest: "/etc/mysql/my.cnf" }
         - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
