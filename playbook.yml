@@ -33,9 +33,8 @@
         - { src: "/etc/ssl/certs/apache-selfsigned.crt", dest: "/etc/ssl/certs/apache-selfsigned.crt" }
         - { src: "/etc/apache2/sites-available/montp2.obtusk.com.conf", dest: "/etc/apache2/sites-available/montp2.obtusk.com.conf" }
         - { src: "/var/www/montp2.obtusk.com", dest: "/var/www/montp2.obtusk.com" }
-      when: 
-        - extraction_result is succeeded
-        - (extraction_result.changed or (item.dest | stat).stat.exists == false)
+      when: extraction_result is succeeded
+        
 
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
