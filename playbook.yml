@@ -8,10 +8,6 @@
         name: docker.io
         state: present
 
-    - name: Téléchargement de l'image Docker
-      docker_image:
-        name: lstar974/serveur
-
     - name: Sauvegarde de l'image Docker en tant que fichier tar
       command: docker save lstar974/serveur -o /root/serveur.tar
 
