@@ -1,88 +1,17 @@
-- name: Install Apache, MySQL and PHP
-  hosts: all
+- name: Deploy Application
+  hosts: 192.168.6.50
+  remote_user: lucas
   become: true
-  vars:  
-    ssl_cert_path: "/etc/ssl/certs/self-signed.crt"
-    ssl_key_path: "/etc/ssl/private/self-signed.key"
+
   tasks:
-    - name: Installation des packages
-      apt:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - apache2
-        - mariadb-server
-        - php
-        - libapache2-mod-php
-        - php-mysql
-        - openssl
+    - name: Pull Docker Image
+      docker_image:
+        name: lstar974/serveur
+        source: pull
 
-    - name: Enable Apache2 SSL module
-      apache2_module:
-        name: ssl
-        state: present
-
-    - name: Create self-signed SSL certificate
-      openssl_certificate:
-        path_cert: "{{ ssl_cert_path }}"
-        path_key: "{{ ssl_key_path }}"
-        common_name: "montp2.obtusk.com"
-        subject_alt_name: "DNS:montp2.obtusk.com,DNS:matomo-montp2.obtusk.com"
-        provider: selfsigned
-
-    - name: Copie des fichiers de configuration
-      copy:
-        src: "{{ item }}"
-        dest: "/etc/apache2/sites-available/{{ item }}"
-      with_items:
-        - montp2.obtusk.com.conf
-        - matomo-montp2.obtusk.com.conf
-        - apache2.conf
-
-    - name: Configure montp2.obtusk.com virtualhost
-      template:
-        src: montp2.obtusk.com.conf.j2
-        dest: /etc/apache2/sites-available/montp2.obtusk.com.conf
-      notify: Reload Apache2
-
-    - name: Configure matomo-montp2.obtusk.com virtualhost
-      template:
-        src: matomo-montp2.obtusk.com.conf.j2
-        dest: /etc/apache2/sites-available/matomo-montp2.obtusk.com.conf
-      notify: Reload Apache2
-
-    - name: Activation des virtualhosts
-      command: a2ensite {{ item }}
-      with_items:
-        - montp2.obtusk.com.conf
-        - matomo-montp2.obtusk.com.conf
-
-    - name: Désactivation du site par défaut
-      command: a2dissite 000-default.conf
-
-    - name: Redémarrage d'Apache
-      service:
-        name: apache2
-        state: restarted
-
-    - name: Installation de Matomo
-      unarchive:
-        src: "https://builds.matomo.org/matomo-latest.zip"
-        dest: "/var/www/matomo-montp2.obtusk.com"
-        remote_src: yes
-        creates: "/var/www/matomo-montp2.obtusk.com/piwik.php"
-
-    - name: Configuration de Matomo
-      command: php /var/www/matomo-montp2.obtusk.com/console config:set --section=database --key=dbname --value=matomo
-      environment:
-        MYSQL_PWD: root
-
-    - name: Création de la base de données pour Matomo
-      command: mysql -uroot -e "CREATE DATABASE IF NOT EXISTS matomo;"
-      environment:
-        MYSQL_PWD: root
-
-    - name: Redémarrage du serveur MariaDB
-      service:
-        name: mariadb
-        state: restarted
+    - name: Run Docker Container
+      docker_container:
+        name: my_app_container
+        image: lstar974/serveur
+        ports:
+          - "60:60"
