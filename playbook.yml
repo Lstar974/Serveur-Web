@@ -19,7 +19,7 @@
   command: docker cp {{ container_name }}:{{ item.src }} {{ item.dest }}
   with_items: "{{ files_to_copy }}"
   vars:
-    container_name: my_container
+    container_name: my_app_container
     files_to_copy:
       - src: /etc/mysql/my.cnf
         dest: /etc/mysql/my.cnf
