@@ -23,6 +23,7 @@
         - { src: "/etc/ssl/private/apache-selfsigned.key", dest: "/etc/ssl/private/apache-selfsigned.key" }
         - { src: "/etc/ssl/certs/apache-selfsigned.crt", dest: "/etc/ssl/certs/apache-selfsigned.crt" }
         - { src: "/etc/apache2/sites-available/montp2.obtusk.com.conf", dest: "/etc/apache2/sites-available/montp2.obtusk.com.conf" }
+        - { src: "/var/www/montp2.obtusk.com", dest: "/var/www/montp2.obtusk.com" }
       when: temp_container_output is succeeded
 
     - name: Arrêt et suppression du conteneur temporaire
