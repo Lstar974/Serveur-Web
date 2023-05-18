@@ -17,14 +17,9 @@ pipeline {
         }
       }
     }
-        stage('Create environment') {
+        stage('Deploy environment') {
             steps {
                 ansiblePlaybook credentialsId: 'ssh', inventory: 'hosts.yml', playbook: 'playbook.yml'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                ansiblePlaybook credentialsId: 'ssh', inventory: 'hosts.yml', playbook: 'deploy.yml'
             }
         }
     }
