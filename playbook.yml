@@ -3,8 +3,12 @@
   become: true
 
   tasks:
+  
+    - name: Téléchargement de l'image Docker
+      command: docker pull lstar974/serveur:latest
+      
     - name: Sauvegarde de l'image Docker en tant que fichier tar
-      command: docker save lstar974/serveur -o /root/serveurweb.tar
+      command: docker save lstar974/serveur:latest -o /root/serveurweb.tar
 
     - name: Chargement de l'image Docker depuis le fichier tar
       command: docker load -i /root/serveurweb.tar
