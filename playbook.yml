@@ -33,9 +33,19 @@
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
             dest: /var/www
-
+            
+    - name: Déplacement du dossier 'Site futur' vers '/var/www/montp2.obtusk.com'
+      synchronize:
+        src: /var/www/Site\ futur/
+        dest: /var/www/montp2.obtusk.com/
+        exclude: Site\ futur/
+        
+    - name: Suppression du dossier 'Site futur' (si nécessaire)
+      file:
+        path: /var/www/Site\ futur/
+        state: absent
+        
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_temp_container
         state: absent
-
