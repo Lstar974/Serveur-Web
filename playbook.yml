@@ -6,6 +6,14 @@
     - name: Sauvegarde de l'image Docker en tant que fichier tar
       command: docker save lstar974/serveur -o /root/serveur.tar
 
+    - name: Copie du fichier tar sur la machine distante
+      copy:
+        src: /root/serveur.tar
+        dest: /root/serveur.tar
+
+    - name: Chargement de l'image Docker depuis le fichier tar
+      command: docker load -i /root/serveur.tar
+
     - name: Création du conteneur temporaire
       docker_container:
         name: my_temp_container
@@ -16,7 +24,7 @@
       register: temp_container_output
 
     - name: Copie des fichiers de configuration depuis le conteneur
-      command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
+      command: sh -c "docker cp my_temp_container:{{ item.src }} {{ item.dest }}"
       with_items: "{{ files_to_copy }}"
       vars:
         files_to_copy:
@@ -36,4 +44,9 @@
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_temp_container
+        state: absent
+
+    - name: Suppression du fichier tar
+      file:
+        path: /root/serveur.tar
         state: absent
