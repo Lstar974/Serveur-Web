@@ -42,9 +42,9 @@ RUN echo '<VirtualHost *:80>\n\
 \n\
 <VirtualHost *:443>\n\
     ServerName montp2.obtusk.com\n\
-    DocumentRoot /var/www/Site\ futur\n\
+    DocumentRoot /var/www/montp2.obtusk.com\n\
 \n\
-    <Directory /var/www/Site\ futur>\n\
+    <Directory /var/www/montp2.obtusk.com>\n\
         AllowOverride All\n\
         AuthType Basic\n\
         AuthUserFile /etc/apache2/.htpasswd\n\
