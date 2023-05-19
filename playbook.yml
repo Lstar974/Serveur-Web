@@ -4,10 +4,10 @@
 
   tasks:
     - name: Sauvegarde de l'image Docker en tant que fichier tar
-      command: docker save lstar974/serveur -o /root/serveur.tar
+      command: docker save lstar974/serveur -o /root/serveurweb.tar
 
     - name: Chargement de l'image Docker depuis le fichier tar
-      command: docker load -i /root/serveur.tar
+      command: docker load -i /root/serveurweb.tar
 
     - name: Création du conteneur temporaire
       docker_container:
