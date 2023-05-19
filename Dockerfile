@@ -14,7 +14,7 @@ COPY mariadb-config /etc/mysql/
 RUN service mariadb start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" && mysql -e "CREATE USER 'lucas'@'localhost' IDENTIFIED BY '1234';" && mysql -e "GRANT ALL PRIVILEGES ON matomo.* TO 'lucas'@'localhost';"
 
 # Clonage du repo Github
-RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
+RUN git clone https://github.com/Lstar974/site.git montp2.obtusk.com
 
 # Génération du certificat auto-signé
 RUN openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/C=US/ST=State/L=City/O=Organization/CN=montp2.obtusk.com" -keyout apache-selfsigned.key -out apache-selfsigned.crt
