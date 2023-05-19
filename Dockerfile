@@ -17,7 +17,7 @@ RUN service mariadb start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" &&
 RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 
 # Ajout du propriétaire du site
-RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/'Site futur'
+RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/Site\ futur
 
 # Ajout de l'utilsateur au fichier .htpasswd
 RUN  htpasswd -c /etc/apache2/.htpasswd lucas
@@ -42,9 +42,9 @@ RUN echo '<VirtualHost *:80>\n\
 \n\
 <VirtualHost *:443>\n\
     ServerName montp2.obtusk.com\n\
-    DocumentRoot /var/www/Site futur\n\
+    DocumentRoot /var/www/Site\ futur\n\
 \n\
-    <Directory /var/www/Site futur>\n\
+    <Directory /var/www/Site\ futur>\n\
         AllowOverride All\n\
         AuthType Basic\n\
         AuthUserFile /etc/apache2/.htpasswd\n\
