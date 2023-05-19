@@ -13,7 +13,6 @@
       docker_container:
         name: my_temp_container
         image: lstar974/serveur
-        command: sleep infinity
         detach: yes
         privileged: yes
       register: temp_container_output
