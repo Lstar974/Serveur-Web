@@ -6,10 +6,13 @@
     - name: Téléchargement de l'image Docker
       command: docker pull lstar974/serveur:latest
       
+    - name: Sauvegarde de l'image Docker en tant que fichier tar
+      command: docker save lstar974/serveur:latest -o /root/serveur.tar
+      
     - name: Création du conteneur temporaire
       docker_container:
         name: my_temp_container
-        image: lstar974/serveur
+        image: lstar974/serveur:latest
         command: sleep infinity
         detach: yes
         privileged: yes
