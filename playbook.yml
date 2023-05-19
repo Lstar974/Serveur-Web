@@ -16,19 +16,19 @@
       register: temp_container_output
 
     - name: Copie des fichiers de configuration depuis le conteneur
-      command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }}"
+      command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=1"
       with_items: "{{ files_to_copy }}"
       vars:
         files_to_copy:
           - src: /etc/mysql/my.cnf
             dest: /etc/mysql
-          - src: apache-selfsigned.key
+          - src: /etc/ssl/private/apache-selfsigned.key
             dest: /etc/ssl/private
-          - src: apache-selfsigned.crt
+          - src: /etc/ssl/certs/apache-selfsigned.crt
             dest: /etc/ssl/certs
-          - src: montp2.obtusk.com.conf
+          - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
             dest: /etc/apache2/sites-available
-          - src: montp2.obtusk.com
+          - src: /var/www/montp2.obtusk.com
             dest: /var/www
 
     - name: Arrêt et suppression du conteneur temporaire
