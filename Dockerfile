@@ -37,6 +37,14 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.c
     && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '<VirtualHost *:443>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    DocumentRoot /var/www/'Site futur'' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '  <DocumentRoot /var/www/'Site futur'>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    AllowOverride All' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    AuthType Basic' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    AuthUserFile /etc/apache2/.htpasswd' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    Require valid-user' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    Require all granted' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    </Directory>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    SSLEngine on' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    SSLCertificateFile /etc/keys/montp2.obtusk.com.crt' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    SSLCertificateKeyFile /etc/keys/montp2.obtusk.com.key' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
