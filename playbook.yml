@@ -19,7 +19,7 @@
       register: temp_container_output
 
     - name: Copie des fichiers de configuration depuis le conteneur
-      command: sh -c "docker cp my_temp_container:{{ item.src }} {{ item.dest }}"
+      command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
       with_items: "{{ files_to_copy }}"
       vars:
         files_to_copy:
