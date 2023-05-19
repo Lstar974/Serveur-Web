@@ -30,6 +30,8 @@
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
             dest: /var/www
+          - src: /etc/apache2/.htpasswd
+            dest: /etc/apache2/
 
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
