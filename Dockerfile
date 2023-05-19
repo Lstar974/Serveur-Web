@@ -34,9 +34,6 @@ RUN openssl req -new -key /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.
 # Auto-signature du certificat
 RUN openssl x509 -req -days 365 -in /etc/keys/montp2.obtusk.com.csr -signkey /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.crt
 
-# Ajout du propriétaire
-RUN chown -R www-data:www-data /etc/apache2/sites-available/montp2.obtusk.com.conf
-
 # Création du fichier de configuration du virtualhost
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
@@ -57,6 +54,9 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.c
     && echo '    SSLCertificateKeyFile /etc/keys/montp2.obtusk.com.key' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    DocumentRoot /var/www/montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf
+    
+# Ajout du propriétaire
+RUN chown -R www-data:www-data /etc/apache2/sites-available/montp2.obtusk.com.conf
 
 # Désactiver les fichiers de configuration par défaut
 RUN a2dissite 000-default.conf default-ssl.conf
