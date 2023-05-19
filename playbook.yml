@@ -5,54 +5,34 @@
   tasks:
     - name: Téléchargement de l'image Docker
       command: docker pull lstar974/serveur:latest
-
-    - name: Sauvegarde de l'image Docker en tant que fichier tar
-      command: docker save lstar974/serveur:latest -o /root/serveurweb.tar
-
-    - name: Chargement de l'image Docker depuis le fichier tar
-      command: docker load -i /root/serveurweb.tar
-
+      
     - name: Création du conteneur temporaire
       docker_container:
         name: my_temp_container
         image: lstar974/serveur
+        command: sleep infinity
         detach: yes
         privileged: yes
       register: temp_container_output
 
-    - name: Démarrage du conteneur temporaire
-      docker_container:
-        name: my_temp_container
-        state: started
-
-    - name: Pause pour permettre au conteneur de démarrer
-      pause:
-        seconds: 5
-
     - name: Copie des fichiers de configuration depuis le conteneur
-      command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
+      command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }}"
       with_items: "{{ files_to_copy }}"
       vars:
         files_to_copy:
           - src: /etc/mysql/my.cnf
             dest: /etc/mysql
-          - src: /etc/keys/montp2.obtusk.com.key
-            dest: /etc/keys
-          - src: /etc/keys/montp2.obtusk.com.crt
-            dest: /etc/keys
+          - src: /etc/ssl/private/apache-selfsigned.key
+            dest: /etc/ssl/private
+          - src: /etc/ssl/certs/apache-selfsigned.crt
+            dest: /etc/ssl/certs
           - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
             dest: /var/www
-          - src: /etc/apache2/.htpasswd
-            dest: /etc/apache2/
 
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_temp_container
         state: absent
 
-    - name: Suppression du fichier tar
-      file:
-        path: /root/serveurweb.tar
-        state: absent
