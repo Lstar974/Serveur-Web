@@ -25,10 +25,10 @@
         files_to_copy:
           - src: /etc/mysql/my.cnf
             dest: /etc/mysql
-          - src: /etc/ssl/private/apache-selfsigned.key
-            dest: /etc/ssl/private
-          - src: /etc/ssl/certs/apache-selfsigned.crt
-            dest: /etc/ssl/certs
+          - src: /etc/keys/montp2.obtusk.com.key
+            dest: /etc/keys/
+          - src: /etc/keys/montp2.obtusk.com.crt
+            dest: /etc/keys/
           - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
