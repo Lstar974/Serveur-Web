@@ -39,7 +39,7 @@ RUN a2enmod ssl
 RUN a2dissite 000-default.conf default-ssl.conf
 
 # Activer le fichier montp2.obtusk.com.conf
-RUN a2ensite /root/montp2.obtusk.com.conf
+RUN cat /root/montp2.obtusk.com.conf && a2ensite /root/montp2.obtusk.com.conf
 
 # Exposition des ports
 EXPOSE 80
