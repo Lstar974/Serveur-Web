@@ -16,6 +16,9 @@ RUN service mariadb start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" &&
 # Clonage du repo Github
 RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 
+# Ajout de l'utilsateur au fichier .htpasswd
+RUN  htpasswd -c /etc/apache2/.htpasswd lucas
+
 # Création du dossier pour le certificat et la clé
 RUN mkdir /etc/keys
 
@@ -27,8 +30,6 @@ RUN openssl req -new -key /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.
 
 # Auto-signature du certificat
 RUN openssl x509 -req -days 365 -in /etc/keys/montp2.obtusk.com.csr -signkey /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.crt
-
-
 
 # Création du fichier de configuration du virtualhost
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.conf \
