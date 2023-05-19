@@ -26,9 +26,9 @@
           - src: /etc/mysql/my.cnf
             dest: /etc/mysql
           - src: /etc/keys/montp2.obtusk.com.key
-            dest: /etc/keys/
+            dest: /etc/keys
           - src: /etc/keys/montp2.obtusk.com.crt
-            dest: /etc/keys/
+            dest: /etc/keys
           - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
