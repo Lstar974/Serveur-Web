@@ -35,25 +35,27 @@ RUN openssl req -new -key /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.
 RUN openssl x509 -req -days 365 -in /etc/keys/montp2.obtusk.com.csr -signkey /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.crt
 
 # Création du fichier de configuration du virtualhost
-RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    Redirect permanent / https://montp2.obtusk.com/' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '<VirtualHost *:443>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    DocumentRoot /var/www/Site\ futur' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    <Directory /var/www/Site\ futur>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '        AllowOverride All' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '        AuthType Basic' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '        AuthUserFile /etc/apache2/.htpasswd' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '        Require valid-user' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '        Require all granted' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    </Directory>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    SSLEngine on' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    SSLCertificateFile /etc/keys/montp2.obtusk.com.crt' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    SSLCertificateKeyFile /etc/keys/montp2.obtusk.com.key' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    DocumentRoot /var/www/montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf
+RUN echo '<VirtualHost *:80>\n\
+    ServerName montp2.obtusk.com\n\
+    Redirect permanent / https://montp2.obtusk.com/\n\
+</VirtualHost>\n\
+\n\
+<VirtualHost *:443>\n\
+    ServerName montp2.obtusk.com\n\
+    DocumentRoot /var/www/Site futur\n\
+\n\
+    <Directory /var/www/Site futur>\n\
+        AllowOverride All\n\
+        AuthType Basic\n\
+        AuthUserFile /etc/apache2/.htpasswd\n\
+        Require valid-user\n\
+        Require all granted\n\
+    </Directory>\n\
+\n\
+    SSLEngine on\n\
+    SSLCertificateFile /etc/keys/montp2.obtusk.com.crt\n\
+    SSLCertificateKeyFile /etc/keys/montp2.obtusk.com.key\n\
+</VirtualHost>' > /etc/apache2/sites-available/montp2.obtusk.com.conf
     
 # Ajout du propriétaire
 RUN chown -R www-data:www-data /etc/apache2/sites-available/montp2.obtusk.com.conf
