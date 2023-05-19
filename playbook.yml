@@ -19,11 +19,11 @@
         detach: yes
         privileged: yes
       register: temp_container_output
-      
-     - name: Démarrage du conteneur temporaire
-       docker_container:
-         name: my_temp_container
-         state: started
+
+    - name: Démarrage du conteneur temporaire
+      docker_container:
+        name: my_temp_container
+        state: started
 
     - name: Copie des fichiers de configuration depuis le conteneur
       command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
