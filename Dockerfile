@@ -23,7 +23,7 @@ RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/Site\ futur
 RUN  htpasswd -c /etc/apache2/.htpasswd lucas
 
 # Création du dossier pour le certificat et la clé
-RUN mkdir /etc/keys
+RUN mkdir /etc/secure/keys
 
 # Génération d'une clé privée
 RUN openssl genpkey -algorithm RSA -out /etc/secure/keys/montp2.obtusk.com.key
