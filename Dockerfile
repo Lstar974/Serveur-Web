@@ -14,32 +14,32 @@ COPY mariadb-config /etc/mysql/
 RUN service mariadb start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" && mysql -e "CREATE USER 'lucas'@'localhost' IDENTIFIED BY '1234';" && mysql -e "GRANT ALL PRIVILEGES ON matomo.* TO 'lucas'@'localhost';"
 
 # Clonage du repo Github
-RUN git clone https://github.com/Lstar974/site.git /montp2.obtusk.com
+RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 
 # Génération du certificat auto-signé
-RUN openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/C=US/ST=State/L=City/O=Organization/CN=montp2.obtusk.com" -keyout /apache-selfsigned.key -out /apache-selfsigned.crt
+RUN openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/C=US/ST=State/L=City/O=Organization/CN=montp2.obtusk.com" -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
 
 # Création du fichier de configuration du virtualhost
-RUN echo '<VirtualHost *:80>' > /montp2.obtusk.com.conf \
-    && echo '    ServerName montp2.obtusk.com' >> /montp2.obtusk.com.conf \
-    && echo '    Redirect permanent / https://montp2.obtusk.com/' >> /montp2.obtusk.com.conf \
-    && echo '</VirtualHost>' >> /montp2.obtusk.com.conf \
-    && echo '<VirtualHost *:443>' >> /montp2.obtusk.com.conf \
-    && echo '    ServerName montp2.obtusk.com' >> /montp2.obtusk.com.conf \
-    && echo '    SSLEngine on' >> /montp2.obtusk.com.conf \
-    && echo '    SSLCertificateFile /apache-selfsigned.crt' >> /montp2.obtusk.com.conf \
-    && echo '    SSLCertificateKeyFile /apache-selfsigned.key' >> /montp2.obtusk.com.conf \
-    && echo '    DocumentRoot /var/www/montp2.obtusk.com' >> /montp2.obtusk.com.conf \
-    && echo '</VirtualHost>' >> /montp2.obtusk.com.conf
-
-# Activer les modules Apache
-RUN a2enmod ssl
+RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    Redirect permanent / https://montp2.obtusk.com/' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '<VirtualHost *:443>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    SSLEngine on' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    DocumentRoot /var/www/montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf
 
 # Désactiver les fichiers de configuration par défaut
 RUN a2dissite 000-default.conf default-ssl.conf
 
 # Activer le fichier montp2.obtusk.com.conf
-RUN cat /montp2.obtusk.com.conf && a2ensite /montp2.obtusk.com.conf
+RUN a2ensite montp2.obtusk.com.conf
+
+# Activer le module SSL
+RUN a2enmod ssl
 
 # Exposition des ports
 EXPOSE 80
