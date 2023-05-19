@@ -22,6 +22,9 @@ RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/Site\ futur
 # Ajout de l'utilsateur au fichier .htpasswd
 RUN  htpasswd -c /etc/apache2/.htpasswd lucas
 
+# Création du dossier secure
+RUN mkdir /etc/secure
+
 # Création du dossier pour le certificat et la clé
 RUN mkdir /etc/secure/keys
 
