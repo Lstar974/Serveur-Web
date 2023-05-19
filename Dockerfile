@@ -22,8 +22,8 @@ RUN mkdir /etc/keys
 # Génération d'une clé privée
 RUN openssl genpkey -algorithm RSA -out /etc/keys/montp2.obtusk.com.key
 
-# Génération d'une demande certificat
-RUN openssl req -new -key /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.csr
+# Génération d'une demande certificat avec sujet spécifié
+RUN openssl req -new -key /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.csr -subj "/CN=montp2.obtusk.com"
 
 # Auto-signature du certificat
 RUN openssl x509 -req -days 365 -in /etc/keys/montp2.obtusk.com.csr -signkey /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.crt
