@@ -6,11 +6,6 @@
     - name: Sauvegarde de l'image Docker en tant que fichier tar
       command: docker save lstar974/serveur -o /root/serveur.tar
 
-    - name: Copie du fichier tar sur la machine distante
-      copy:
-        src: /root/serveur.tar
-        dest: /root/serveur.tar
-
     - name: Chargement de l'image Docker depuis le fichier tar
       command: docker load -i /root/serveur.tar
 
