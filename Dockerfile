@@ -16,8 +16,19 @@ RUN service mariadb start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" &&
 # Clonage du repo Github
 RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 
-# Génération du certificat auto-signé
-RUN openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/C=US/ST=State/L=City/O=Organization/CN=montp2.obtusk.com" -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+# Création du dossier pour le certificat et la clé
+RUN mkdir /etc/keys
+
+# Génération d'une clé privée
+RUN openssl genpkey -algorithm RSA -out /etc/keys/montp2.obtusk.com.key
+
+# Génération d'une demande certificat
+RUN openssl req -new -key /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.csr
+
+# Auto-signature du certificat
+RUN openssl x509 -req -days 365 -in /etc/keys/montp2.obtusk.com.csr -signkey /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.crt
+
+
 
 # Création du fichier de configuration du virtualhost
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.conf \
@@ -27,8 +38,8 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.c
     && echo '<VirtualHost *:443>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    SSLEngine on' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    SSLCertificateFile /etc/keys/montp2.obtusk.com.crt' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    SSLCertificateKeyFile /etc/keys/montp2.obtusk.com.key' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    DocumentRoot /var/www/montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf
 
