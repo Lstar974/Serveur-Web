@@ -35,7 +35,7 @@
             dest: /var/www
             
     - name: Déplacement du contenu du dossier 'Site futur' vers '/var/www/montp2.obtusk.com'
-      command: mv /var/www/Site\ futur/* /var/www/montp2.obtusk.com/
+      command: rsync -av --remove-source-files /var/www/Site\ futur/ /var/www/montp2.obtusk.com/
       
     - name: Suppression du dossier 'Site futur' (si nécessaire)
       file:
