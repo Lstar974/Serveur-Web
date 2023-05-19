@@ -25,6 +25,10 @@
         name: my_temp_container
         state: started
 
+    - name: Pause pour permettre au conteneur de démarrer
+      pause:
+        seconds: 5
+
     - name: Copie des fichiers de configuration depuis le conteneur
       command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
       with_items: "{{ files_to_copy }}"
