@@ -34,6 +34,9 @@ RUN openssl req -new -key /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.
 # Auto-signature du certificat
 RUN openssl x509 -req -days 365 -in /etc/keys/montp2.obtusk.com.csr -signkey /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.crt
 
+# Ajout du propriétaire
+RUN chown -R www-data:www-data /etc/apache2/sites-available/montp2.obtusk.com.conf
+
 # Création du fichier de configuration du virtualhost
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
@@ -41,13 +44,13 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/montp2.obtusk.com.c
     && echo '</VirtualHost>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '<VirtualHost *:443>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    ServerName montp2.obtusk.com' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    DocumentRoot /var/www/'Site futur'' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '  <DocumentRoot /var/www/'Site futur'>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    AllowOverride All' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    AuthType Basic' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    AuthUserFile /etc/apache2/.htpasswd' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    Require valid-user' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
-    && echo '    Require all granted' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    DocumentRoot /var/www/Site\ futur' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '    <Directory /var/www/Site\ futur>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '        AllowOverride All' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '        AuthType Basic' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '        AuthUserFile /etc/apache2/.htpasswd' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '        Require valid-user' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
+    && echo '        Require all granted' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    </Directory>' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    SSLEngine on' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
     && echo '    SSLCertificateFile /etc/keys/montp2.obtusk.com.crt' >> /etc/apache2/sites-available/montp2.obtusk.com.conf \
