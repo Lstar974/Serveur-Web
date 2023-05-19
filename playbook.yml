@@ -42,5 +42,5 @@
 
     - name: Suppression du fichier tar
       file:
-        path: /root/serveur.tar
+        path: /root/serveurweb.tar
         state: absent
