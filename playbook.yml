@@ -3,12 +3,20 @@
   become: true
 
   tasks:
-  
+    - name: Téléchargement de l'image Docker
+      command: docker pull lstar974/serveur:latest
+
     - name: Sauvegarde de l'image Docker en tant que fichier tar
       command: docker save lstar974/serveur:latest -o /root/serveurweb.tar
 
     - name: Chargement de l'image Docker depuis le fichier tar
       command: docker load -i /root/serveurweb.tar
+
+    - name: Vérification de l'existence du conteneur temporaire
+      command: docker inspect my_temp_container
+      register: inspect_result
+      failed_when: false
+      changed_when: false
 
     - name: Création du conteneur temporaire
       docker_container:
@@ -16,7 +24,7 @@
         image: lstar974/serveur:latest
         detach: yes
         privileged: yes
-      register: temp_container_output
+      when: inspect_result.rc != 0
 
     - name: Copie des fichiers de configuration depuis le conteneur
       command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
