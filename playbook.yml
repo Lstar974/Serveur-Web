@@ -42,6 +42,15 @@
         path: /var/www/Site\ futur/
         state: absent
         
+    - name: Activation du fichier de configuration montp2.obtusk.com.conf
+      command: a2ensite montp2.obtusk.com.conf
+      
+    - name: Désactivation du fichier de configuration 000-default.conf
+      command: a2dissite 000-default.conf
+      
+    - name: Reload du service Apache2
+      command: systemctl reload apache2
+      
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_temp_container
