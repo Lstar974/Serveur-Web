@@ -31,24 +31,17 @@
             dest: /var/www
 
     - name: Génération de la clé privée
-      command: openssl genpkey -algorithm RSA -out /etc/secure/keys/montp2.obtusk.com.key
+      command: openssl genpkey -algorithm RSA -out /etc/keys/montp2.obtusk.com.key
       changed_when: false
 
     - name: Génération de la demande de certificat
-      command: openssl req -new -key /etc/secure/keys/montp2.obtusk.com.key -out /etc/secure/keys/montp2.obtusk.com.csr -subj "/CN=montp2.obtusk.com"
+      command: openssl req -new -key /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.csr -subj "/CN=montp2.obtusk.com"
       changed_when: false
 
     - name: Auto-signature du certificat
-      shell: openssl x509 -req -days 365 -in /etc/secure/keys/montp2.obtusk.com.csr -signkey /etc/secure/keys/montp2.obtusk.com.key -out /etc/secure/keys/montp2.obtusk.com.crt
+      shell: openssl x509 -req -days 365 -in /etc/keys/montp2.obtusk.com.csr -signkey /etc/keys/montp2.obtusk.com.key -out /etc/keys/montp2.obtusk.com.crt
       changed_when: false
 
-    - name: Copie de la clé privée vers le serveur de destination
-      command: docker cp my_temp_container:/etc/secure/keys/montp2.obtusk.com.key /path/on/server/montp2.obtusk.com.key
-      changed_when: false
-
-    - name: Copie du certificat vers le serveur de destination
-      command: docker cp my_temp_container:/etc/secure/keys/montp2.obtusk.com.crt /path/on/server/montp2.obtusk.com.crt
-      changed_when: false
 
     - name: Déplacement du contenu du dossier 'Site futur' vers '/var/www/montp2.obtusk.com'
       command: rsync -av --remove-source-files /var/www/Site\ futur/ /var/www/montp2.obtusk.com/
