@@ -5,10 +5,10 @@
   tasks:
     - name: Téléchargement de l'image Docker
       command: docker pull lstar974/serveur:latest
-      
+
     - name: Sauvegarde de l'image Docker en tant que fichier tar
       command: docker save lstar974/serveur:latest -o /root/serveur.tar
-      
+
     - name: Création du conteneur temporaire
       docker_container:
         name: my_temp_container
@@ -25,23 +25,39 @@
         files_to_copy:
           - src: /etc/mysql/my.cnf
             dest: /etc/mysql
-          - src: /etc/secure/keys/montp2.obtusk.com.key
-            dest: /etc/keys
-          - src: /etc/secure/keys/montp2.obtusk.com.crt
-            dest: /etc/keys
           - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
             dest: /var/www
-            
+
+    - name: Génération de la clé privée
+      command: openssl genpkey -algorithm RSA -out /etc/secure/keys/montp2.obtusk.com.key
+      changed_when: false
+
+    - name: Génération de la demande de certificat
+      command: openssl req -new -key /etc/secure/keys/montp2.obtusk.com.key -out /etc/secure/keys/montp2.obtusk.com.csr -subj "/CN=montp2.obtusk.com"
+      changed_when: false
+
+    - name: Auto-signature du certificat
+      shell: openssl x509 -req -days 365 -in /etc/secure/keys/montp2.obtusk.com.csr -signkey /etc/secure/keys/montp2.obtusk.com.key -out /etc/secure/keys/montp2.obtusk.com.crt
+      changed_when: false
+
+    - name: Copie de la clé privée vers le serveur de destination
+      command: docker cp my_temp_container:/etc/secure/keys/montp2.obtusk.com.key /path/on/server/montp2.obtusk.com.key
+      changed_when: false
+
+    - name: Copie du certificat vers le serveur de destination
+      command: docker cp my_temp_container:/etc/secure/keys/montp2.obtusk.com.crt /path/on/server/montp2.obtusk.com.crt
+      changed_when: false
+
     - name: Déplacement du contenu du dossier 'Site futur' vers '/var/www/montp2.obtusk.com'
       command: rsync -av --remove-source-files /var/www/Site\ futur/ /var/www/montp2.obtusk.com/
-      
+
     - name: Suppression du dossier 'Site futur' (si nécessaire)
       file:
         path: /var/www/Site\ futur/
         state: absent
-        
+
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_temp_container
