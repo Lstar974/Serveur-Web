@@ -31,6 +31,12 @@ RUN mkdir /etc/secure/keys
 # Génération d'une clé privée
 RUN openssl genpkey -algorithm RSA -out /etc/secure/keys/montp2.obtusk.com.key
 
+# Génération d'une demande certificat avec sujet spécifié
+RUN openssl req -new -key /etc/secure/keys/montp2.obtusk.com.key -out /etc/secure/keys/montp2.obtusk.com.csr -subj "/CN=montp2.obtusk.com"
+
+# Auto-signature du certificat
+RUN openssl x509 -req -days 365 -in /etc/secure/keys/montp2.obtusk.com.csr -signkey /etc/secure/keys/montp2.obtusk.com.key -out /etc/secure/keys/montp2.obtusk.com.crt
+
 # Création du fichier de configuration du virtualhost
 RUN echo '<VirtualHost *:80>\n\
     ServerName montp2.obtusk.com\n\
