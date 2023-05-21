@@ -18,10 +18,13 @@ RUN service mariadb start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" &&
 RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 
 # Ajout du propriétaire du site
-RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/Site\ futur
+RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/
+
+#Création du dossier password
+RUN mkdir /etc/apache2/password
 
 # Ajout de l'utilsateur au fichier .htpasswd
-RUN htpasswd -c /etc/apache2/.htpasswd lucas
+RUN htpasswd -c /etc/apache2/password/.htpasswd lucas
 
 # Configuration de Traefik
 RUN wget -O /usr/local/bin/traefik https://github.com/traefik/traefik/releases/download/v2.5.4/traefik_v2.5.4_linux_amd64
