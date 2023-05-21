@@ -46,6 +46,10 @@
             dest: /usr/local/bin/
           - src: /etc/traefik/conf/traefik.conf
             dest: /etc/traefik/conf/
+          - src: /etc/apache2/password/.htpasswd
+            dest: /etc/apache2/
+          - src: /etc/traefik/.htpasswd
+            dest: /etc/traefik/
             
     - name: Déplacement du contenu du dossier 'Site futur' vers '/var/www/montp2.obtusk.com'
       command: rsync -av --remove-source-files /var/www/Site\ futur/ /var/www/montp2.obtusk.com/
