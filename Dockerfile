@@ -70,7 +70,7 @@ RUN echo '[http.middlewares]\n\
   domain = "obtusk.com"' > /etc/traefik/conf/traefik.toml
 
 # Ajout de la configuration Traefik dans Apache
-RUN echo 'Include /etc/traefik/conf/traefik.conf' >> /etc/apache2/apache2.conf
+RUN echo 'Include /etc/traefik/conf/traefik.toml' >> /etc/apache2/apache2.conf
 
 # Ajout du fichier de configuration VirtualHost
 RUN echo '<VirtualHost *:80>\n\
