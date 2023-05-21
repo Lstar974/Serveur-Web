@@ -33,8 +33,7 @@ RUN mkdir /etc/traefik
 RUN mkdir /etc/traefik/conf
 
 # Configuration du fichier de configuration Traefik
-RUN echo 'logLevel = "INFO"\n\
-[entryPoints]\n\
+RUN echo '[entryPoints]\n\
   [entryPoints.web]\n\
     address = ":80"\n\
   [entryPoints.web-secure]\n\
