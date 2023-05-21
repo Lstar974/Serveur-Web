@@ -37,9 +37,9 @@
       
     - name: Enregistrement du fichier de configuration dans Apache2
       lineinfile:
-      dest: /etc/apache2/apache2.conf
-      line: 'Include /etc/traefik/conf/traefik.toml'
-      state: present
+        dest: /etc/apache2/apache2.conf
+        line: 'Include /etc/traefik/conf/traefik.toml'
+        state: present
 
     - name: Création du dossier traefik
       command: mkdir -p /etc/traefik
