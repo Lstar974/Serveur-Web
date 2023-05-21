@@ -16,58 +16,64 @@ RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 # Ajout du propriétaire du site
 RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/
 
-#Création du dossier password
+# Création du dossier password
 RUN mkdir /etc/apache2/password
 
-# Ajout de l'utilsateur au fichier .htpasswd
+# Ajout de l'utilisateur au fichier .htpasswd
 RUN htpasswd -c /etc/apache2/password/.htpasswd lucas
 
 # Configuration de Traefik
 RUN wget -O /usr/local/bin/traefik https://github.com/traefik/traefik/releases/tag/v2.10.1/traefik_v2.10.1_linux_amd64
 RUN chmod +x /usr/local/bin/traefik
 
-#Création du dossier traefik
+# Création du dossier traefik
 RUN mkdir /etc/traefik
 
-#Création du dossier conf
+# Création du dossier conf
 RUN mkdir /etc/traefik/conf
 
 # Configuration du fichier de configuration Traefik
-RUN echo '[http.middlewares]\n\
-    [http.middlewares.redirect-to-https.redirectScheme]\n\
-      scheme = "https"\n\
+RUN echo 'logLevel = "INFO"\n\
+[entryPoints]\n\
+  [entryPoints.web]\n\
+    address = ":80"\n\
+  [entryPoints.web-secure]\n\
+    address = ":443"\n\
 \n\
-[http.routers]\n\
-    [http.routers.http-to-https]\n\
-      rule = "HostRegexp(`{host:.+}`)"\n\
-      entrypoints = ["web"]\n\
-      middlewares = ["redirect-to-https.redirectScheme"]\n\
-\n\
-    [http.routers.app]\n\
-      rule = "HostRegexp(`{host:.+}`)"\n\
-      entrypoints = ["web-secure"]\n\
-      middlewares = ["auth"]\n\
-      service = "app@internal"\n\
-      [http.routers.app.tls]\n\
-        certResolver = "myresolver"\n\
-\n\
-[http.services]\n\
-    [http.services.app.loadBalancer]\n\
-      [[http.services.app.loadBalancer.servers]]\n\
-        url = "http://localhost"\n\
-\n\
-[http.middlewares]\n\
-    [http.middlewares.auth.basicAuth]\n\
-      usersFile = "/etc/traefik/.htpasswd"\n\
-\n\
+# Certificats\n\
 [certificatesResolvers.myresolver.acme]\n\
   email = "lucas.buchle@gmail.com"\n\
   storage = "acme.json"\n\
   [certificatesResolvers.myresolver.acme.httpChallenge]\n\
-   entryPoint = "web"\n\
-   [certificatesResolvers.myresolver.acme.domains]\n\
-  [certificatesResolvers.myresolver.acme.domains.main]\n\
-  domain = "obtusk.com"' > /etc/traefik/conf/traefik.toml
+    entryPoint = "web"\n\
+\n\
+# Routage\n\
+[http.middlewares]\n\
+  [http.middlewares.redirect-to-https.redirectScheme]\n\
+    scheme = "https"\n\
+\n\
+[http.routers]\n\
+  [http.routers.http-to-https]\n\
+    rule = "HostRegexp(`{host:.+}`)"\n\
+    entryPoints = ["web"]\n\
+    middlewares = ["redirect-to-https.redirectScheme"]\n\
+\n\
+  [http.routers.app]\n\
+    rule = "HostRegexp(`{host:.+}`)"\n\
+    entryPoints = ["web-secure"]\n\
+    service = "app@internal"\n\
+    middlewares = ["auth"]\n\
+    [http.routers.app.tls]\n\
+      certResolver = "myresolver"\n\
+\n\
+[http.services]\n\
+  [http.services.app.loadBalancer]\n\
+    [[http.services.app.loadBalancer.servers]]\n\
+      url = "http://localhost"\n\
+\n\
+[http.middlewares]\n\
+  [http.middlewares.auth.basicAuth]\n\
+    usersFile = "/etc/traefik/.htpasswd"' > /etc/traefik/conf/traefik.toml
 
 # Ajout du fichier de configuration VirtualHost
 RUN echo '<VirtualHost *:80>\n\
@@ -115,4 +121,4 @@ EXPOSE 443
 EXPOSE 8080
 
 # Démarrage d'Apache et de Traefik
-CMD ["/bin/bash", "-c", "service apache2 start && /usr/local/bin/traefik --configfile /etc/traefik/traefik.conf"]
+CMD ["/bin/bash", "-c", "service apache2 start && /usr/local/bin/traefik --configfile /etc/traefik/conf/traefik.toml"]
