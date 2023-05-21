@@ -81,8 +81,8 @@ RUN echo '<VirtualHost *:80>\n\
 \n\
 <VirtualHost *:443>\n\
     ServerName montp2.obtusk.com\n\
-    DocumentRoot /var/www/montp2.obtusk.com/Site\ futur\n\
-    <Directory /var/www/montp2.obtusk.com/Site\ futur>\n\
+    DocumentRoot /var/www/montp2.obtusk.com\n\
+    <Directory /var/www/montp2.obtusk.com>\n\
         Options Indexes FollowSymLinks MultiViews\n\
         AllowOverride All\n\
         Order allow,deny\n\
