@@ -27,7 +27,7 @@ RUN mkdir /etc/apache2/password
 RUN htpasswd -c /etc/apache2/password/.htpasswd lucas
 
 # Configuration de Traefik
-RUN wget -O /usr/local/bin/traefik https://github.com/traefik/traefik/releases/download/v2.5.4/traefik_v2.5.4_linux_amd64
+RUN wget -O /usr/local/bin/traefik https://github.com/traefik/traefik/releases/tag/v2.10.1/traefik_v2.10.1_linux_amd64
 RUN chmod +x /usr/local/bin/traefik
 
 #Création du dossier traefik
