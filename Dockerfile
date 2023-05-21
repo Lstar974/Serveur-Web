@@ -68,7 +68,10 @@ RUN echo '[http.middlewares]\n\
   email = "your-email@example.com"\n\
   storage = "acme.json"\n\
   [certificatesResolvers.myresolver.acme.httpChallenge]\n\
-    entryPoint = "web"' > /etc/traefik/conf/traefik.conf
+   entryPoint = "web"\n\
+   [certificatesResolvers.myresolver.acme.domains]\n\
+  [certificatesResolvers.myresolver.acme.domains.main]\n\
+  domain = "obtusk.com"' > /etc/traefik/conf/traefik.toml
 
 # Ajout de la configuration Traefik dans Apache
 RUN echo 'Include /etc/traefik/conf/traefik.conf' >> /etc/apache2/apache2.conf
