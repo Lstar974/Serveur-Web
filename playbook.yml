@@ -19,7 +19,7 @@
       register: temp_container_output
       
     - name: Installation de Certbot
-      command: apt-get install certbot
+      command: apt install certbot
       
     - name: Création du dossier traefik
       command: mkdir -p /etc/traefik
