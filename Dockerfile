@@ -61,7 +61,7 @@ RUN echo '[http.middlewares]\n\
       usersFile = "/etc/traefik/.htpasswd"\n\
 \n\
 [certificatesResolvers.myresolver.acme]\n\
-  email = "your-email@example.com"\n\
+  email = "lucas.buchle@gmail.com"\n\
   storage = "acme.json"\n\
   [certificatesResolvers.myresolver.acme.httpChallenge]\n\
    entryPoint = "web"\n\
