@@ -28,7 +28,12 @@
       command: mkdir -p /etc/traefik
       args:
         creates: /etc/traefik
-
+        
+    - name: Création du dossier certs
+      command: mkdir -p /etc/traefik/certs
+      args:
+        creates: /etc/traefik
+        
     - name: Création du dossier conf
       command: mkdir -p /etc/traefik/conf
       args:
