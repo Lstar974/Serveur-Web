@@ -18,6 +18,9 @@
         privileged: yes
       register: temp_container_output
       
+    - name: Installation de Certbot
+      command: sudo apt-get install certbot
+      
     - name: Création du dossier traefik
       command: mkdir -p /etc/traefik
       args:
@@ -44,7 +47,7 @@
             dest: /var/www
           - src: /usr/local/bin/traefik
             dest: /usr/local/bin/
-          - src: /etc/traefik/conf/traefik.conf
+          - src: /etc/traefik/conf/traefik.toml
             dest: /etc/traefik/conf/
           - src: /etc/apache2/password/.htpasswd
             dest: /etc/apache2/
