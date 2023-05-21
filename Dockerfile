@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     php \
     php-mysql \
     git \
-    openssl
+    openssl \
+    wget
 
 # Configuration de MariaDB
 COPY mariadb-config /etc/mysql/
@@ -20,24 +21,50 @@ RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/Site\ futur
 
 # Ajout de l'utilsateur au fichier .htpasswd
-RUN  htpasswd -c /etc/apache2/.htpasswd lucas
+RUN htpasswd -c /etc/apache2/.htpasswd lucas
 
-# Création du dossier secure
-RUN mkdir /etc/secure
+# Configuration de Traefik
+RUN wget -O /usr/local/bin/traefik https://github.com/traefik/traefik/releases/download/v2.5.4/traefik_v2.5.4_linux_amd64
+RUN chmod +x /usr/local/bin/traefik
 
-# Création du dossier pour le certificat et la clé
-RUN mkdir /etc/secure/keys
+# Configuration du fichier de configuration Traefik
+RUN echo '[http.middlewares]\n\
+    [http.middlewares.redirect-to-https.redirectScheme]\n\
+      scheme = "https"\n\
+\n\
+[http.routers]\n\
+    [http.routers.http-to-https]\n\
+      rule = "HostRegexp(`{host:.+}`)"\n\
+      entrypoints = ["web"]\n\
+      middlewares = ["redirect-to-https.redirectScheme"]\n\
+\n\
+    [http.routers.app]\n\
+      rule = "HostRegexp(`{host:.+}`)"\n\
+      entrypoints = ["web-secure"]\n\
+      middlewares = ["auth"]\n\
+      service = "app@internal"\n\
+      [http.routers.app.tls]\n\
+        certResolver = "myresolver"\n\
+\n\
+[http.services]\n\
+    [http.services.app.loadBalancer]\n\
+      [[http.services.app.loadBalancer.servers]]\n\
+        url = "http://localhost"\n\
+\n\
+[http.middlewares]\n\
+    [http.middlewares.auth.basicAuth]\n\
+      usersFile = "/etc/traefik/.htpasswd"\n\
+\n\
+[certificatesResolvers.myresolver.acme]\n\
+  email = "your-email@example.com"\n\
+  storage = "acme.json"\n\
+  [certificatesResolvers.myresolver.acme.httpChallenge]\n\
+    entryPoint = "web"' > /etc/traefik/traefik.conf
 
-# Génération d'une clé privée
-RUN openssl genpkey -algorithm RSA -out /etc/secure/keys/montp2.obtusk.com.key
+# Ajout de la configuration Traefik dans Apache
+RUN echo 'Include /etc/traefik/traefik.conf' >> /etc/apache2/apache2.conf
 
-# Génération d'une demande certificat avec sujet spécifié
-RUN openssl req -new -key /etc/secure/keys/montp2.obtusk.com.key -out /etc/secure/keys/montp2.obtusk.com.csr -subj "/CN=montp2.obtusk.com"
-
-# Auto-signature du certificat
-RUN openssl x509 -req -days 365 -in /etc/secure/keys/montp2.obtusk.com.csr -signkey /etc/secure/keys/montp2.obtusk.com.key -out /etc/secure/keys/montp2.obtusk.com.crt
-
-# Création du fichier de configuration du virtualhost
+# Ajout du fichier de configuration VirtualHost
 RUN echo '<VirtualHost *:80>\n\
     ServerName montp2.obtusk.com\n\
     Redirect permanent / https://montp2.obtusk.com/\n\
@@ -45,21 +72,26 @@ RUN echo '<VirtualHost *:80>\n\
 \n\
 <VirtualHost *:443>\n\
     ServerName montp2.obtusk.com\n\
-    DocumentRoot /var/www/montp2.obtusk.com\n\
-\n\
-    <Directory /var/www/montp2.obtusk.com>\n\
+    DocumentRoot /var/www/montp2.obtusk.com/Site\ futur\n\
+    <Directory /var/www/montp2.obtusk.com/Site\ futur>\n\
+        Options Indexes FollowSymLinks MultiViews\n\
         AllowOverride All\n\
-        AuthType Basic\n\
-        AuthUserFile /etc/apache2/.htpasswd\n\
-        Require valid-user\n\
-        Require all granted\n\
+        Order allow,deny\n\
+        allow from all\n\
     </Directory>\n\
 \n\
     SSLEngine on\n\
-    SSLCertificateFile /etc/keys/montp2.obtusk.com.crt\n\
-    SSLCertificateKeyFile /etc/keys/montp2.obtusk.com.key\n\
+\n\
+    <FilesMatch "\.(cgi|shtml|phtml|php)$">\n\
+        SSLOptions +StdEnvVars\n\
+    </FilesMatch>\n\
+\n\
+    BrowserMatch "MSIE [2-6]" \\\n\
+        nokeepalive ssl-unclean-shutdown \\\n\
+        downgrade-1.0 force-response-1.0\n\
+    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown\n\
 </VirtualHost>' > /etc/apache2/sites-available/montp2.obtusk.com.conf
-    
+
 # Ajout du propriétaire
 RUN chown -R www-data:www-data /etc/apache2/sites-available/montp2.obtusk.com.conf
 
@@ -75,5 +107,7 @@ RUN a2enmod ssl
 # Exposition des ports
 EXPOSE 80
 EXPOSE 443
+EXPOSE 8080
 
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+# Démarrage d'Apache et de Traefik
+CMD ["/bin/bash", "-c", "service apache2 start && /usr/local/bin/traefik --configfile /etc/traefik/traefik.conf"]
