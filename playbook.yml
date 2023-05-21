@@ -24,7 +24,7 @@
         state: present
         
     - name: Vérification de l'existence du compte Let's Encrypt
-      command: certbot register --email lucas.buchle@gmail.com --dry-run
+      command: certbot register --email lucas.buchle@gmail.com
       become: true
       register: certbot_register_output
       changed_when: certbot_register_output.rc != 0 and "Account registered" not in certbot_register_output.stdout
