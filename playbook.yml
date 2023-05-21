@@ -24,15 +24,16 @@
         state: present
         
     - name: Vérification de l'existence du compte Let's Encrypt
-      command: certbot register --email your-email@example.com
+      command: certbot register --email lucas.buchle@gmail.com
       become: true
       register: certbot_register_output
-      changed_when: certbot_register_output.rc != 0 and "There is an existing account" not in certbot_register_output.stderr
+      changed_when: false
+      failed_when: "There is an existing account" not in certbot_register_output.stderr
 
     - name: Enregistrement du compte Let's Encrypt avec Certbot
-      command: certbot register --email your-email@example.com
+      command: certbot register --email lucas.buchle@gmail.com
       become: true
-      when: certbot_register_output.rc != 0 and "There is an existing account" not in certbot_register_output.stderr
+      when: "There is an existing account" not in certbot_register_output.stderr
 
     - name: Création du dossier traefik
       command: mkdir -p /etc/traefik
