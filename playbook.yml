@@ -22,6 +22,17 @@
       apt:
         name: certbot
         state: present
+        
+    - name: Vérification de l'existence du compte Let's Encrypt
+      command: certbot register --email your-email@example.com --dry-run
+      become: true
+      register: certbot_register_output
+      changed_when: certbot_register_output.rc != 0 and "Account registered" not in certbot_register_output.stdout
+
+    - name: Enregistrement du compte Let's Encrypt avec Certbot
+      command: certbot register --email your-email@example.com
+      become: true
+      when: certbot_register_output.rc != 0 and "Account registered" not in certbot_register_output.stdout
 
       
     - name: Création du dossier traefik
