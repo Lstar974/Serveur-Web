@@ -27,6 +27,12 @@ RUN htpasswd -c /etc/apache2/.htpasswd lucas
 RUN wget -O /usr/local/bin/traefik https://github.com/traefik/traefik/releases/download/v2.5.4/traefik_v2.5.4_linux_amd64
 RUN chmod +x /usr/local/bin/traefik
 
+#Création du dossier traefik
+RUN mkdir /etc/traefik
+
+#Création du dossier conf
+RUN mkdir /etc/traefik/conf
+
 # Configuration du fichier de configuration Traefik
 RUN echo '[http.middlewares]\n\
     [http.middlewares.redirect-to-https.redirectScheme]\n\
@@ -59,10 +65,10 @@ RUN echo '[http.middlewares]\n\
   email = "your-email@example.com"\n\
   storage = "acme.json"\n\
   [certificatesResolvers.myresolver.acme.httpChallenge]\n\
-    entryPoint = "web"' > /etc/traefik/traefik.conf
+    entryPoint = "web"' > /etc/traefik/conf/traefik.conf
 
 # Ajout de la configuration Traefik dans Apache
-RUN echo 'Include /etc/traefik/traefik.conf' >> /etc/apache2/apache2.conf
+RUN echo 'Include /etc/traefik/conf/traefik.conf' >> /etc/apache2/apache2.conf
 
 # Ajout du fichier de configuration VirtualHost
 RUN echo '<VirtualHost *:80>\n\
