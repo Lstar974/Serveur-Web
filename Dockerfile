@@ -10,10 +10,6 @@ RUN apt-get update && apt-get install -y \
     openssl \
     wget
 
-# Configuration de MariaDB
-COPY mariadb-config /etc/mysql/
-RUN service mariadb start && mysql -e "CREATE DATABASE IF NOT EXISTS matomo;" && mysql -e "CREATE USER 'lucas'@'localhost' IDENTIFIED BY '1234';" && mysql -e "GRANT ALL PRIVILEGES ON matomo.* TO 'lucas'@'localhost';"
-
 # Clonage du repo Github
 RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
 
