@@ -44,8 +44,8 @@ RUN echo '[accesslog]\n\
         to = "obtusk_secure"\n\
         scheme = "https"\n\
 \n\
-  [entryPoints.obtusk_secure]
-    address=":443"
+  [entryPoints.obtusk_secure]\n\
+    address=":443"\n\
 \n\
 [providers.file]\n\
   directory = "/root/"\n\
