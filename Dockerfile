@@ -28,8 +28,6 @@ RUN mkdir /etc/traefik
 # Création du dossier conf
 RUN mkdir /etc/traefik/conf
 
-RUN mkdir /etc/traefik/router
-
 # Configuration du fichier de configuration Traefik
 RUN echo '[accesslog]\n\
 [api]\n\
