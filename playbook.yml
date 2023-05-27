@@ -97,22 +97,18 @@
     - name: Création du réseau web
       command: docker network create web
       
+    - name: Création du volume
+      command: docker volume create traefik_config
+      
     - name: Installation du conteneur Traefik
-      ansible.builtin.docker_container:
-        name: traefik
-        image: traefik:v2.2
-        volumes:
-          - "/var/run/docker.sock:/var/run/docker.sock"
-          - "$PWD/traefik.toml:/traefik.toml"
-          - "$PWD/traefik_dynamic.toml:/traefik_dynamic.toml"
-          - "$PWD/acme.json:/acme.json"
-        ports:
-          - "80:80"
-          - "443:443"
-        networks:
-          - name: web
-      register: traefik_container_output
-            
+      command: docker run -d
+        -v traefik_config:/traefik
+        -p 80:80
+        -p 443:443
+        --network web
+        --name traefik
+        traefik:v2.2
+    
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_temp_container
