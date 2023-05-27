@@ -22,57 +22,70 @@ RUN mkdir /etc/apache2/password
 # Ajout de l'utilisateur au fichier .htpasswd
 RUN htpasswd -c /etc/apache2/password/.htpasswd lucas
 
-# Configuration de Traefik
-RUN wget -O /usr/local/bin/traefik https://github.com/traefik/traefik/releases/tag/v2.10.1/traefik_v2.10.1_linux_amd64
-RUN chmod +x /usr/local/bin/traefik
-
 # Création du dossier traefik
 RUN mkdir /etc/traefik
 
 # Création du dossier conf
 RUN mkdir /etc/traefik/conf
 
+RUN mkdir /etc/traefik/router
+
 # Configuration du fichier de configuration Traefik
-RUN echo '[entryPoints]\n\
-  [entryPoints.web]\n\
-    address = ":80"\n\
-  [entryPoints.web-secure]\n\
-    address = ":443"\n\
+RUN echo '[accesslog]\n\
+[api]\n\
+  insecure=true\n\
+  dashboard=true\n\
+  debug=true\n\
+[log]\n\
+  level="INFO"\n\
+[entryPoints]\n\
+  [entryPoints.obtusk]\n\
+    address=":80"\n\
+    [entryPoints.obtusk.http.redirections]\n\
+      [entryPoints.obtusk.http.redirections.entryPoint]\n\
+        to = "obtusk_secure"\n\
+        scheme = "https"\n\
 \n\
-# Certificats\n\
-[certificatesResolvers.myresolver.acme]\n\
-  email = "lucas.buchle@gmail.com"\n\
-  storage = "acme.json"\n\
-  [certificatesResolvers.myresolver.acme.httpChallenge]\n\
-    entryPoint = "web"\n\
+  [entryPoints.obtusk_secure]
+    address=":443"
 \n\
-# Routage\n\
-[http.middlewares]\n\
-  [http.middlewares.redirect-to-https.redirectScheme]\n\
-    scheme = "https"\n\
+[providers.file]\n\
+  directory = "/root/"\n\
+  watch = true\n\
 \n\
-[http.routers]\n\
-  [http.routers.http-to-https]\n\
-    rule = "HostRegexp(`{host:.+}`)"\n\
-    entryPoints = ["web"]\n\
-    middlewares = ["redirect-to-https.redirectScheme"]\n\
+[certificatesResolvers]\n\
+  [certificatesResolvers.obtusk_certs]\n\
+    [certificatesResolvers.obtusk_certs.acme]\n\
+      email = "lucas.buchle@gmail.com"\n\
+      caServer = "https://acme-v02.api.letsencrypt.org/directory"\n\
+      storage = "acme.json"\n\
+      keyType = "EC384"\n\
+        [certificatesResolvers.obtusk_certs.acme.httpChallenge]\n\
+          entryPoint = "obtusk"' > /etc/traefik/conf/traefik.toml
+          
+
+
+# Ajout du fichier de routage traefik
+RUN echo '[http]\n\
+  [http.routers]\n\
+    [http.routers.obtusk_route]\n\
+      entryPoints = ["obtusk_secure"]\n\
+      service = "obtusk"\n\
+      rule = "Host(`obtusk.com`) && Path(`/`)"\n\
+      middlewares = ["obtusk_https"]\n\
+      [http.routers.obtusk_route.tls]\n\
+        certResolver = "obtusk_certs"\n\
+  [http.middlewares]\n\
+    [http.middlewares.obtusk_https.redirectScheme]\n\
+       scheme = "https"\n\
+       permanent = true\n\
 \n\
-  [http.routers.app]\n\
-    rule = "HostRegexp(`{host:.+}`)"\n\
-    entryPoints = ["web-secure"]\n\
-    service = "app@internal"\n\
-    middlewares = ["auth"]\n\
-    [http.routers.app.tls]\n\
-      certResolver = "myresolver"\n\
-\n\
-[http.services]\n\
-  [http.services.app.loadBalancer]\n\
-    [[http.services.app.loadBalancer.servers]]\n\
-      url = "http://localhost"\n\
-\n\
-[http.middlewares]\n\
-  [http.middlewares.auth.basicAuth]\n\
-    usersFile = "/etc/traefik/.htpasswd"' > /etc/traefik/conf/traefik.toml
+  [http.services]\n\
+    [http.services.obtusk]\n\
+      [http.services.obtusk.loadBalancer]\n\
+        [[http.services.obtusk.loadBalancer.servers]]\n\
+          url = "http://montp2.obtusk.com"' > /etc/traefik/conf/traefik_dynamic.toml
+
 
 # Ajout du fichier de configuration VirtualHost
 RUN echo '<VirtualHost *:80>\n\
@@ -89,17 +102,6 @@ RUN echo '<VirtualHost *:80>\n\
         Order allow,deny\n\
         allow from all\n\
     </Directory>\n\
-\n\
-    SSLEngine on\n\
-\n\
-    <FilesMatch "\.(cgi|shtml|phtml|php)$">\n\
-        SSLOptions +StdEnvVars\n\
-    </FilesMatch>\n\
-\n\
-    BrowserMatch "MSIE [2-6]" \\\n\
-        nokeepalive ssl-unclean-shutdown \\\n\
-        downgrade-1.0 force-response-1.0\n\
-    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown\n\
 </VirtualHost>' > /etc/apache2/sites-available/montp2.obtusk.com.conf
 
 # Ajout du propriétaire
