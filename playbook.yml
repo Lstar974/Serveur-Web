@@ -94,11 +94,18 @@
     - name: Désactivation Apache2
       command: systemctl stop apache2
       
+    - name: Suppression du réseau web existant
+      command: docker network rm web
+      ignore_errors: true
+      
     - name: Création du réseau web
       command: docker network create web
       
     - name: Création du volume
       command: docker volume create traefik_config
+      
+    - name: Suppression du conteneur existant
+      command: docker rm -f traefik
       
     - name: Installation du conteneur Traefik
       command: docker run -d
