@@ -70,7 +70,7 @@
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
             dest: /var/www
-          - src: /usr/local/bin/traefik_dynamic.toml
+          - src: /etc/traefik/conf/traefik_dynamic.toml
             dest: /root/
           - src: /etc/traefik/conf/traefik.toml
             dest: /root/
