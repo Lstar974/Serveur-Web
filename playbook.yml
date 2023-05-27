@@ -3,6 +3,23 @@
   become: true
 
   tasks:
+  
+    - name: Installation de Docker
+      apt:
+        name: docker.io
+        state: present
+        
+    - name: Démarrage et autorisation de Docker
+      command: systemctl start docker && systemctl enable docker
+      
+    - name: Installation de Python
+      apt:
+        name: install python3-pip
+        state: present
+        
+    - name: Installation des modules
+      command: pip3 install docker && pip3 install ansible
+      
     - name: Téléchargement de l'image Docker
       command: docker pull lstar974/serveur:latest
       
