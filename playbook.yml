@@ -94,6 +94,9 @@
     - name: Désactivation Apache2
       command: systemctl stop apache2
       
+    - name: Création du réseau web
+      command: docker network create web
+      
     - name: Installation du conteneur Traefik
       ansible.builtin.docker_container:
         name: traefik
