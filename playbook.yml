@@ -103,12 +103,12 @@
           - "$PWD/traefik.toml:/traefik.toml"
           - "$PWD/traefik_dynamic.toml:/traefik_dynamic.toml"
           - "$PWD/acme.json:/acme.json"
-       ports:
+        ports:
           - "80:80"
           - "443:443"
         networks:
           - name: web
-        register: traefik_container_output
+      register: traefik_container_output
             
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
