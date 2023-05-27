@@ -98,16 +98,21 @@
       command: systemctl stop apache2
       
     - name: Installation du conteneur Traefik
-      command: docker run -d \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v $PWD/traefik.toml:/traefik.toml \
-  -v $PWD/traefik_dynamic.toml:/traefik_dynamic.toml \
-  -v $PWD/acme.json:/acme.json \
-  -p 80:80 \
-  -p 443:443 \
-  --network web \
-  --name traefik \
-  traefik:v2.2
+      command: docker run -d
+        args:
+          name: traefik
+          image: traefik:v2.2
+          volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
+            - "$PWD/traefik.toml:/traefik.toml"
+            - "$PWD/traefik_dynamic.toml:/traefik_dynamic.toml"
+            - "$PWD/acme.json:/acme.json"
+          ports:
+            - "80:80"
+            - "443:443"
+          networks:
+            - web
+            
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_temp_container
