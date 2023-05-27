@@ -58,7 +58,7 @@
       
     - name: Attribution du propriétaire
       command: chown -R www-data:www-data /etc/traefik/conf
-
+      
     - name: Copie des fichiers de configuration depuis le conteneur
       command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
       with_items: "{{ files_to_copy }}"
@@ -70,14 +70,12 @@
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
             dest: /var/www
-          - src: /usr/local/bin/traefik
-            dest: /usr/local/bin/
+          - src: /usr/local/bin/traefik_dynamic.toml
+            dest: /root/
           - src: /etc/traefik/conf/traefik.toml
-            dest: /etc/traefik/conf/
+            dest: /root/
           - src: /etc/apache2/password/.htpasswd
             dest: /etc/apache2/
-          - src: /etc/traefik/.htpasswd
-            dest: /etc/traefik/
             
     - name: Déplacement du contenu du dossier 'Site futur' vers '/var/www/montp2.obtusk.com'
       command: rsync -av --remove-source-files /var/www/Site\ futur/ /var/www/montp2.obtusk.com/
@@ -96,6 +94,20 @@
     - name: Reload du service Apache2
       command: systemctl reload apache2
       
+    - name: Désactivation Apache2
+      command: systemctl stop apache2
+      
+    - name: Installation du conteneur Traefik
+      command: docker run -d \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $PWD/traefik.toml:/traefik.toml \
+  -v $PWD/traefik_dynamic.toml:/traefik_dynamic.toml \
+  -v $PWD/acme.json:/acme.json \
+  -p 80:80 \
+  -p 443:443 \
+  --network web \
+  --name traefik \
+  traefik:v2.2
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
         name: my_temp_container
