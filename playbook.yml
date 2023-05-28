@@ -91,12 +91,6 @@
       command: certbot register --email lucas.buchle@gmail.com
       become: true
       when: "'There is an existing account' not in certbot_register_output.stderr"
-      
-    - name: Enregistrement du fichier de configuration dans Apache2
-      lineinfile:
-        dest: /etc/apache2/apache2.conf
-        line: 'Include /etc/traefik/conf/traefik.toml'
-        state: present
 
     - name: Création du dossier traefik
       command: mkdir -p /etc/traefik
