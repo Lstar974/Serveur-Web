@@ -4,37 +4,37 @@
 
   tasks:
   
-   - name: Installation de Docker
-     become: yes
-     apt:
-       name: "{{ item }}"
-       state: present
-       update_cache: yes
-     with_items:
-       - apt-transport-https
-       - ca-certificates
-       - curl
-       - gnupg-agent
-       - software-properties-common
-
-   - name: Ajout de la clé GPG Docker
-     become: yes
-     apt_key:
-       url: https://download.docker.com/linux/debian/gpg
-       state: present
-
-   - name: Ajout du référentiel Docker
-     become: yes
-     apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
-        state: present
-
     - name: Installation de Docker
       become: yes
       apt:
-        name: docker-ce
+        name: "{{ item }}"
         state: present
         update_cache: yes
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+
+    - name: Ajout de la clé GPG Docker
+      become: yes
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Ajout du référentiel Docker
+      become: yes
+      apt_repository:
+          repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+          state: present
+
+     - name: Installation de Docker
+       become: yes
+       apt:
+         name: docker-ce
+         state: present
+         update_cache: yes
 
         
     - name: Démarrage et autorisation de Docker
