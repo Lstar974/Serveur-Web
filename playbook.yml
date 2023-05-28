@@ -160,16 +160,17 @@
       command: docker volume create traefik_config
       
     - name: Installation du conteneur Traefik
-      command: docker run -d
-        -v /var/run/docker.sock:/var/run/docker.sock
-        -v /traefik.toml:/traefik.toml
-        -v /traefik_dynamic.toml:/traefik_dynamic.toml
-        -v /acme.json:/acme.json
-        -p 80:80
-        -p 443:443
-        --network web
-        --name traefik
+      command: docker run -d \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v /traefik.toml:/traefik.toml \
+        -v /traefik_dynamic.toml:/traefik_dynamic.toml \
+        -v /acme.json:/acme.json \
+        -p 80:80 \
+        -p 443:443 \
+        --network web \
+        --name traefik \
         traefik:v2.2
+
 
     
     - name: Arrêt et suppression du conteneur temporaire
