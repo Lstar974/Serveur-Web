@@ -50,8 +50,15 @@
         name: python3-pip
         state: present
         
-    - name: Installation des modules
-      command: pip3 install docker && pip3 install ansible
+    - name: Installation de Python
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Installation du module Docker
+      pip:
+        name: docker
+        state: present
       
     - name: Téléchargement de l'image Docker
       command: docker pull lstar974/serveur:latest
