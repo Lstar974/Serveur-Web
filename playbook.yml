@@ -121,8 +121,6 @@
       with_items: "{{ files_to_copy }}"
       vars:
         files_to_copy:
-          - src: /etc/mysql/my.cnf
-            dest: /etc/mysql
           - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
             dest: /etc/apache2/sites-available
           - src: /var/www/montp2.obtusk.com
