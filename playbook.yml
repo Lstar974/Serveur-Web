@@ -26,15 +26,15 @@
     - name: Ajout du référentiel Docker
       become: yes
       apt_repository:
-          repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
-          state: present
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+        state: present
 
-     - name: Installation de Docker
-       become: yes
-       apt:
-         name: docker-ce
-         state: present
-         update_cache: yes
+    - name: Installation de Docker
+      become: yes
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
 
         
     - name: Démarrage et autorisation de Docker
