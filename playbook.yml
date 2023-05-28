@@ -161,12 +161,16 @@
       
     - name: Installation du conteneur Traefik
       command: docker run -d
-        -v traefik_config:/traefik
+        -v /var/run/docker.sock:/var/run/docker.sock
+        -v {{ playbook_dir }}/traefik.toml:/traefik.toml
+        -v {{ playbook_dir }}/traefik_dynamic.toml:/traefik_dynamic.toml
+        -v {{ playbook_dir }}/acme.json:/acme.json
         -p 80:80
         -p 443:443
         --network web
         --name traefik
         traefik:v2.2
+
     
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
