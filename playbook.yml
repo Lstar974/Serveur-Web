@@ -3,7 +3,6 @@
   become: true
 
   tasks:
-  
     - name: Installation de Docker
       become: yes
       apt:
@@ -104,7 +103,7 @@
     - name: Création du dossier certs
       command: mkdir -p /etc/traefik/certs
       args:
-        creates: /etc/traefik
+        creates: /etc/traefik/certs
         
     - name: Création du dossier conf
       command: mkdir -p /etc/traefik/conf
