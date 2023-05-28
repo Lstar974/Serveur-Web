@@ -37,16 +37,12 @@
 
     - name: Démarrage et autorisation de Docker
       command:
-        - systemctl
-        - start
-        - docker
+        cmd: "systemctl start docker"
       become: true
 
     - name: Activation du démarrage automatique de Docker
       command:
-        - systemctl
-        - enable
-        - docker
+        cmd: "systemctl enable docker"
       become: true
 
     - name: Installation de Python
@@ -138,7 +134,6 @@
       file:
         path: /var/www/Site\ futur/
         state: absent
-        
     - name: Suppression du conteneur existant
       command: docker rm -f traefik
       
