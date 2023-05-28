@@ -162,9 +162,9 @@
     - name: Installation du conteneur Traefik
       command: docker run -d
         -v /var/run/docker.sock:/var/run/docker.sock
-        -v {{ playbook_dir }}/traefik.toml:/traefik.toml
-        -v {{ playbook_dir }}/traefik_dynamic.toml:/traefik_dynamic.toml
-        -v {{ playbook_dir }}/acme.json:/acme.json
+        -v /traefik.toml:/traefik.toml
+        -v /traefik_dynamic.toml:/traefik_dynamic.toml
+        -v /acme.json:/acme.json
         -p 80:80
         -p 443:443
         --network web
