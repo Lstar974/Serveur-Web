@@ -92,13 +92,16 @@ RUN echo '<VirtualHost *:80>\n\
 </VirtualHost>\n\
 \n\
 <VirtualHost *:443>\n\
+    ServerAdmin montp2.obtusk.com\n\
     ServerName montp2.obtusk.com\n\
     DocumentRoot /var/www/montp2.obtusk.com\n\
     <Directory /var/www/montp2.obtusk.com>\n\
-        Options Indexes FollowSymLinks MultiViews\n\
         AllowOverride All\n\
-        Order allow,deny\n\
-        allow from all\n\
+        AuthType Basic\n\
+        AuthName "Restricted Content"\n\
+        AuthUserFile /etc/apache2/.htpasswd\n\
+        Require valid-user\n\
+        Require all granted\n\
     </Directory>\n\
 </VirtualHost>' > /etc/apache2/sites-available/montp2.obtusk.com.conf
 
