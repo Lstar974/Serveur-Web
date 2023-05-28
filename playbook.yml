@@ -36,19 +36,19 @@
         state: present
         update_cache: yes
 
-     - name: Démarrage et autorisation de Docker
-       command:
-         - systemctl
-         - start
-         - docker
-       become: true
+    - name: Démarrage et autorisation de Docker
+      command:
+        - systemctl
+        - start
+        - docker
+      become: true
 
-     - name: Activation du démarrage automatique de Docker
-       command:
-         - systemctl
-         - enable
-         - docker
-       become: true
+    - name: Activation du démarrage automatique de Docker
+      command:
+        - systemctl
+        - enable
+        - docker
+      become: true
 
     - name: Installation de Python
       apt:
