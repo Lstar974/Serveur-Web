@@ -140,6 +140,9 @@
     - name: Désactivation du fichier de configuration 000-default.conf
       command: a2dissite 000-default.conf
       
+    - name: Démarrage Apache2
+      command: systemctl start apache2
+      
     - name: Reload Apache2
       command: systemctl reload apache2
       
