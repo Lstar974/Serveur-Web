@@ -51,7 +51,7 @@
 
     - name: Installation de Python
       apt:
-        name: install python3-pip
+        name: python3-pip
         state: present
         
     - name: Installation des modules
@@ -138,6 +138,7 @@
       file:
         path: /var/www/Site\ futur/
         state: absent
+        
     - name: Suppression du conteneur existant
       command: docker rm -f traefik
       
