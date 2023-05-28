@@ -69,7 +69,7 @@ RUN echo '[http]\n\
     [http.routers.obtusk_route]\n\
       entryPoints = ["obtusk_secure"]\n\
       service = "obtusk"\n\
-      rule = "Host(`obtusk.com`) && Path(`/`)"\n\
+      rule = "Host(`montp2.obtusk.com`) && Path(`/`)"\n\
       middlewares = ["obtusk_https"]\n\
       [http.routers.obtusk_route.tls]\n\
         certResolver = "obtusk_certs"\n\
