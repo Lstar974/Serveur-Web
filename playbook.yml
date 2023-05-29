@@ -149,7 +149,7 @@
       command: docker volume create traefik_config
       
     - name: Installation du conteneur Traefik
-      command: docker-compose -f /root/traefik/docker-compose.yaml up -d
+      command: /usr/local/bin/docker-compose -f /root/traefik/docker-compose.yaml up -d
     
     - name: Arrêt et suppression du conteneur temporaire
       docker_container:
