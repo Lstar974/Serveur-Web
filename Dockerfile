@@ -22,67 +22,94 @@ RUN mkdir /etc/apache2/password
 # Ajout de l'utilisateur au fichier .htpasswd
 RUN htpasswd -c /etc/apache2/password/.htpasswd lucas
 
-# Création du dossier traefik
-RUN mkdir /etc/traefik
+# Création du dossier web
+RUN mkdir /etc/web
 
-# Création du dossier conf
-RUN mkdir /etc/traefik/conf
+# Création du dossier serveur
+RUN mkdir /etc/web/serveur
+
+# Création du dossier traefik
+RUN mkdir /etc/web/serveur/traefik
+
+# Création du fichier acme.json
+RUN touch /etc/web/serveur/traefik/acme.json
+
+# Attribution des droits sur le fichier acme.json
+RUN chmod 600 /etc/web/serveur/traefik/acme.json
 
 # Configuration du fichier de configuration Traefik
-RUN echo '[accesslog]\n\
-[api]\n\
-  insecure=true\n\
-  dashboard=true\n\
-  debug=true\n\
-[log]\n\
-  level="INFO"\n\
-[entryPoints]\n\
-  [entryPoints.obtusk]\n\
-    address=":80"\n\
-    [entryPoints.obtusk.http.redirections]\n\
-      [entryPoints.obtusk.http.redirections.entryPoint]\n\
-        to = "obtusk_secure"\n\
-        scheme = "https"\n\
+RUN echo 'global:\n\
+  checkNewVersion: true\n\
+  sendAnonymousUsage: false\n\
+api:\n\
+  dashboard: true\n\
+  insecure: false\n\
 \n\
-  [entryPoints.obtusk_secure]\n\
-    address=":443"\n\
+entryPoints:\n\
+  web:\n\
+    address: :80\n\
+    http:\n\
+       redirections:\n\
+         entryPoint:\n\
+           to: websecure\n\
+           scheme: https\n\
 \n\
-[providers.file]\n\
-  directory = "/root/"\n\
-  watch = true\n\
+  websecure:\n\
+    address: :443\n\
 \n\
-[certificatesResolvers]\n\
-  [certificatesResolvers.obtusk_certs]\n\
-    [certificatesResolvers.obtusk_certs.acme]\n\
-      email = "lucas.buchle@gmail.com"\n\
-      caServer = "https://acme-v02.api.letsencrypt.org/directory"\n\
-      storage = "acme.json"\n\
-      keyType = "EC384"\n\
-        [certificatesResolvers.obtusk_certs.acme.httpChallenge]\n\
-          entryPoint = "obtusk"' > /etc/traefik/conf/traefik.toml
+certificatesResolvers:\n\
+   selfsigned:\n\
+     acme:\n\
+       email: lucas.buchle@gmail.com\n\
+       storage: acme.json\n\
+       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"\n\
+       httpChallenge:\n\
+         entryPoint: web\n\
+\n\
+providers:\n\
+  docker:\n\
+    exposedByDefault: false\n\
+  file:\n\
+    directory: /traefik\n\
+    watch: true' > /etc/web/serveur/traefik/traefik.yml
           
 
 
 # Ajout du fichier de routage traefik
-RUN echo '[http]\n\
-  [http.routers]\n\
-    [http.routers.obtusk_route]\n\
-      entryPoints = ["obtusk_secure"]\n\
-      service = "obtusk"\n\
-      rule = "Host(`obtusk.com`) && Path(`/`)"\n\
-      middlewares = ["obtusk_https"]\n\
-      [http.routers.obtusk_route.tls]\n\
-        certResolver = "obtusk_certs"\n\
-  [http.middlewares]\n\
-    [http.middlewares.obtusk_https.redirectScheme]\n\
-       scheme = "https"\n\
-       permanent = true\n\
-\n\
-  [http.services]\n\
-    [http.services.obtusk]\n\
-      [http.services.obtusk.loadBalancer]\n\
-        [[http.services.obtusk.loadBalancer.servers]]\n\
-          url = "http://montp2.obtusk.com"' > /etc/traefik/conf/traefik_dynamic.toml
+RUN echo '---\n\
+services:\n\
+  traefik:\n\
+    image: traefik:v2.5\n\
+    container_name: traefik\n\
+    ports:\n\
+      - 80:80\n\
+      - 443:443\n\
+    \n\
+    volumes:\n\
+      - /traefik:/traefik\n\
+      - /var/run/docker.sock:/var/run/docker.sock:ro\n\
+    restart: unless-stopped\n\
+    command:\n\
+      - "--api.insecure=false"\n\
+      - "--providers.docker=true"\n\
+      - "--providers.docker.exposedbydefault=false"\n\
+      - "--entrypoints.web.address=:80"\n\
+      - "--entrypoints.websecure.address=:443"\n\
+      - "--certificatesresolvers.myresolver.acme.email=lucas.buchle@gmail.com"\n\
+      - "--certificatesresolvers.myresolver.acme.storage=/root/traefik/acme.json"\n\
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"\n\
+  apache:\n\
+    image: httpd:latest\n\
+    container_name: apache\n\
+    labels:\n\
+      - "traefik.http.routers.apache.rule=Host(`montp2.obtusk.com`)"\n\
+      - "traefik.enable=true"\n\
+      - "traefik.http.routers.apache.entrypoints=websecure"\n\
+      - "traefik.http.routers.apache.tls=true"\n\
+      - "traefik.http.routers.apache.tls.certresolver=selfsigned"\n\
+    volumes:\n\
+      - /var/www/montp2.obtusk.com:/usr/local/apache2/htdocs\n\
+    restart: unless-stopped' > /etc/web/serveur/traefik/docker-compose.yaml
 
 
 # Ajout du fichier de configuration VirtualHost
