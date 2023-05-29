@@ -59,11 +59,6 @@
       pip:
         name: docker
         state: present
-    - name: Installation de docker-compose
-      command: sudo curl -L "https://github.com/docker/compose/releases/download/v2.0.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    
-    - name: Attribution des droits
-      command: chmod +x /usr/local/bin/docker-compose
       
     - name: Téléchargement de l'image Docker
       command: docker pull lstar974/serveur:latest
