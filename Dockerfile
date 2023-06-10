@@ -10,13 +10,13 @@ RUN apt-get update && apt-get install -y \
     openssl \
     wget
 # Création du dossier montp2.obtusk.com
-RUN mkdir /var/www/montp2.obtusk.com
+RUN mkdir /var/www/html/montp2.obtusk.com
 
 # Clonage du repo Github
-RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
+RUN git clone https://github.com/Lstar974/site.git /var/www/html/montp2.obtusk.com
 
 # Ajout du propriétaire du site
-RUN chown -R www-data:www-data /var/www/montp2.obtusk.com/
+RUN chown -R www-data:www-data /var/www/html/montp2.obtusk.com/
 
 # Création du dossier password
 RUN mkdir /etc/apache2/password
