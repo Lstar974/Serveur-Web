@@ -93,11 +93,12 @@
 
 
     - name: Vérification de l'existence du compte Let's Encrypt
-      shell: certbot register --check-config --agree-tos --email lucas.buchle@gmail.com 2>&1
+      shell: certbot register --agree-tos --email lucas.buchle@gmail.com 2>&1 | grep "There is an existing account"
       become: true
       register: certbot_register_output
       changed_when: false
-      failed_when: "'There is an existing account' not in certbot_register_output.stdout"
+      failed_when: certbot_register_output.rc != 0
+
 
       
     - name: Copie des fichiers de configuration depuis le conteneur
