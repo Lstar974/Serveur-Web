@@ -96,11 +96,6 @@
       command: certbot register --agree-tos --email lucas.buchle@gmail.com
       become: true
       
-
-      
-    - name: Attribution du propriétaire
-      command: chown -R www-data:www-data /etc/traefik/conf
-      
     - name: Copie des fichiers de configuration depuis le conteneur
       command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
       with_items: "{{ files_to_copy }}"
