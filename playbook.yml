@@ -88,7 +88,7 @@
       failed_when: "'There is an existing account' not in certbot_register_output.stderr"
 
     - name: Enregistrement du compte Let's Encrypt avec Certbot
-      command: certbot register --email lucas.buchle@gmail.com
+      command: certbot register --agree-tos --email lucas.buchle@gmail.com
       become: true
       when: "'There is an existing account' not in certbot_register_output.stderr"
 
