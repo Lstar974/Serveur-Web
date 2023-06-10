@@ -108,8 +108,8 @@
         files_to_copy:
           - src: /etc/apache2/sites-available/montp2.obtusk.com.conf
             dest: /etc/apache2/sites-available
-          - src: /var/www/montp2.obtusk.com
-            dest: /var/www/montp2.obtusk.com
+          - src: /var/www/html/montp2.obtusk.com
+            dest: /var/www/
           - src: /etc/apache2/password/.htpasswd
             dest: /etc/apache2/
           - src: /etc/web/serveur/traefik
