@@ -92,9 +92,13 @@
         state: present
 
 
-    - name: Enregistrement du compte Let's Encrypt avec Certbot
-      command: certbot register --agree-tos --email lucas.buchle@gmail.com
+    - name: Vérification de l'existence du compte Let's Encrypt
+      shell: certbot register --check-config --agree-tos --email lucas.buchle@gmail.com 2>&1
       become: true
+      register: certbot_register_output
+      changed_when: false
+      failed_when: "'There is an existing account' not in certbot_register_output.stdout"
+
       
     - name: Copie des fichiers de configuration depuis le conteneur
       command: sh -c "docker exec -i my_temp_container tar -cf - {{ item.src }} | tar -xf - -C {{ item.dest }} --strip-components=3"
