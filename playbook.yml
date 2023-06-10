@@ -59,6 +59,17 @@
       pip:
         name: docker
         state: present
+        
+    - name: Installation des dépendances
+      apt:
+        name: ['python3', 'python3-pip']
+        state: present
+
+    - name: Installation de Docker Compose
+      pip:
+        name: docker-compose
+        state: present
+        executable: pip3
       
     - name: Téléchargement de l'image Docker
       command: docker pull lstar974/serveur:latest
