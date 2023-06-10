@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     git \
     openssl \
     wget
+# Création du dossier montp2.obtusk.com
+RUN mkdir /var/www/montp2.obtusk.com
 
 # Clonage du repo Github
 RUN git clone https://github.com/Lstar974/site.git /var/www/montp2.obtusk.com
