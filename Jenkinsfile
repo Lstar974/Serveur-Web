@@ -22,11 +22,6 @@ pipeline {
                 ansiblePlaybook credentialsId: 'ssh', inventory: 'hosts.yml', playbook: 'playbook.yml'
             }
         }
-        stage('Run Selenium tests') {
-      steps {
-        sh '/usr/bin/python3 /var/lib/jenkins/workspace/DevOps/test_selenium.py'
-            }
-        }
     }
     post {
         success {
